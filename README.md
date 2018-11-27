@@ -1,24 +1,20 @@
-# README
+# Foreign Exchange Explorer
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+### Description
 
-Things you may want to cover:
+### Dependencies
 
-* Ruby version
+* [Git](https://git-scm.com/downloads)
+* [Ruby 2.5.3](https://www.ruby-lang.org/en/)
+* [Rails 5.2.1](http://rubyonrails.org/)
+* [Elasticsearch 6.5](https://www.elastic.co/products/elasticsearch)
 
-* System dependencies
+### Setup
 
-* Configuration
+- `bundle install`
 
-* Database creation
+### Running the Automated Tests
 
-* Database initialization
+- `bundle exec rake`
 
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+### Services
