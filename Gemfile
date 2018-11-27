@@ -44,6 +44,8 @@ group :development, :test do
   gem "bundler-audit", "~> 0.5.0"
 
   gem "rubocop", "~> 0.60.0"
+
+  gem 'rspec-rails', '~> 3.8'
 end
 
 group :development do
