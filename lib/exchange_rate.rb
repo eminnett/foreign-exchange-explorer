@@ -11,6 +11,8 @@ class ExchangeRate
       value: value
     )
     existing_rate = repository.exact_match(exchange_rate).first
-    repository.save(exchange_rate) unless existing_rate
+    return existing_rate if existing_rate.present?
+    repository.save(exchange_rate)
+    exchange_rate
   end
 end
