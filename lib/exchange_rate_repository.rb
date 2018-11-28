@@ -3,7 +3,7 @@ class ExchangeRateRepository
   include Elasticsearch::Persistence::Repository
   include Elasticsearch::Persistence::Repository::DSL
 
-  index_name 'exchange_rates'
+  index_name "#{Rails.env}_exchange_rates"
   klass Rate
 
   mapping do
@@ -19,16 +19,18 @@ class ExchangeRateRepository
            { sort: 'date' }.merge(options))
   end
 
-  def exact_match(rate)
+  def exact_match(date, base_currency, counter_currency)
     return [] unless index_exists?
     search(query: {
       bool: {
         must: [
-          { match: { base_currency: rate.base_currency }},
-          { match: { counter_currency: rate.counter_currency }},
-          { match: { date: rate.date }}
+          { match: { base_currency: base_currency }},
+          { match: { counter_currency: counter_currency }},
+          { match: { date: date }}
         ]
       }
     })
   end
+
+  # TODO: Add search method that looks up rates in a date range.
 end
