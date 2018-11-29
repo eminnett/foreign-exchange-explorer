@@ -3,6 +3,14 @@ class ExchangeRate
     @repository ||= ExchangeRateRepository.new
   end
 
+  def self.currency_repository
+    @currency_repository ||= CurrencyRepository.new
+  end
+
+  def self.currencies
+    currency_repository.all.to_a.uniq { |c| c.code }
+  end
+
   def self.set(date, base_currency, counter_currency, value)
     exchange_rate = Rate.new(
       date: date,
@@ -10,6 +18,7 @@ class ExchangeRate
       counter_currency: counter_currency,
       value: value
     )
+    [base_currency, counter_currency].each { |c| currency_repository.store_unique(c) }
     existing_rate = repository.exact_match(date, base_currency, counter_currency).first
     return existing_rate if existing_rate.present?
     repository.save(exchange_rate)
@@ -24,7 +33,7 @@ class ExchangeRate
     rate
   end
 
-  # TODO: Make this more efficient by searching for a range pf rates in Elasticsearch
+  # TODO: Make this more efficient by searching for a range of rates in Elasticsearch
   def self.rates_between(from, to, base_currency, counter_currency)
     (from..to).map do |day|
       unless day.saturday? || day.sunday?
