@@ -10,7 +10,22 @@ describe Rate do
   end
 
   after(:context) do
-    `bundle exec rake elasticsearch:delete_all_exchange_rates -s`
+    `bundle exec rake elasticsearch:remove_data -s`
+  end
+
+  describe '.currencies' do
+    it 'should return an array of Currencies' do
+      sleep(1.second)
+      currencies = ExchangeRate.currencies
+      expect(currencies).to be_an(Array)
+      returned_classes = currencies.map(&:class).uniq
+      expect(returned_classes.count).to eq(1)
+      expect(returned_classes[0]).to eq(Currency)
+    end
+    it 'should include the available currency codes' do
+      sleep(1.second)
+      expect(ExchangeRate.currencies.map(&:code)).to eq(['EUR', 'GBP'])
+    end
   end
 
   describe '.set' do
