@@ -16,11 +16,11 @@ class ExchangeRate
       date: date,
       base_currency: base_currency,
       counter_currency: counter_currency,
-      value: value
+      value: value.to_s
     )
-    [base_currency, counter_currency].each { |c| currency_repository.store_unique(c) }
     existing_rate = repository.exact_match(date, base_currency, counter_currency).first
     return existing_rate if existing_rate.present?
+    [base_currency, counter_currency].each { |c| currency_repository.store_unique(c) }
     repository.save(exchange_rate)
     exchange_rate
   end
