@@ -6,4 +6,6 @@ Rails.application.routes.draw do
       get 'dates', to: 'dates#show'
     end
   end
+
+  root to: 'home#index'
 end
