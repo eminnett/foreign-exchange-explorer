@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Rate do
+RSpec.describe Rate do
   let(:rate_data) do
     {
       base_currency: 'GBP',

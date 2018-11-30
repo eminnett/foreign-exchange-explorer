@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe Currency do
+RSpec.describe Currency do
   let(:code) { 'GBP' }
   let(:currency) { Currency.new(code: code)}
 
