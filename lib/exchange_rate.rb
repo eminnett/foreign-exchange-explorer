@@ -9,6 +9,11 @@ class ExchangeRate
     @currency_repository ||= CurrencyRepository.new
   end
 
+  def self.dates
+    # TODO: Refactor this not to use a lookup of 'EUR' rates as proxy for dates.
+    repository.all_eur.to_a.map{|rate| rate.date}.uniq
+  end
+
   def self.currencies
     currency_repository.all.to_a.uniq { |c| c.code }
   end

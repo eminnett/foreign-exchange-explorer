@@ -15,6 +15,20 @@ RSpec.describe Rate do
     sleep(1) # Let Elasticsearch catch up.
   end
 
+  describe '.dates' do
+    it 'should return an array of dates' do
+      dates = ExchangeRate.dates
+      expect(dates).to be_an(Array)
+      dates.each do |date|
+        expect{ Date.parse(date) }.to_not raise_error
+      end
+    end
+    it 'should include the available currency codes' do
+      expect(ExchangeRate.dates)
+        .to include('2018-11-23', '2018-11-26', '2018-11-27')
+    end
+  end
+
   describe '.currencies' do
     it 'should return an array of Currencies' do
       currencies = ExchangeRate.currencies
