@@ -1,4 +1,6 @@
 class ExchangeRate
+  class NotFound < StandardError; end
+
   def self.repository
     @repository ||= ExchangeRateRepository.new
   end
@@ -28,18 +30,14 @@ class ExchangeRate
   def self.find_rate(date, base_currency, counter_currency)
     rate = repository.exact_match(date, base_currency, counter_currency).first
     unless rate.present?
-      raise "#{base_currency} in #{counter_currency} on #{date} is unknown."
+      raise NotFound, "The exchange rate for #{base_currency} in " \
+        "#{counter_currency} on #{date} is unknown."
     end
     rate
   end
 
-  # TODO: Make this more efficient by searching for a range of rates in Elasticsearch
   def self.rates_between(from, to, base_currency, counter_currency)
-    (from..to).map do |day|
-      unless day.saturday? || day.sunday?
-        find_rate(day, base_currency, counter_currency)
-      end
-    end.compact
+    repository.between_dates(from, to, base_currency, counter_currency).to_a
   end
 
   def self.at(date, base_currency, counter_currency)

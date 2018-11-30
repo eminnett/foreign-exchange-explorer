@@ -15,7 +15,7 @@ class ExchangeRateRepository
 
   def all(options = {})
     return [] unless index_exists?
-    search({ query: { match_all: { } } },
+    search({ from: 0, size: 10_000, query: { match_all: { } } },
            { sort: 'date' }.merge(options))
   end
 
@@ -32,5 +32,16 @@ class ExchangeRateRepository
     })
   end
 
-  # TODO: Add search method that looks up rates in a date range.
+  def between_dates(from, to, base_currency, counter_currency)
+    return [] unless index_exists?
+    search(from: 0, size: 10_000, query: {
+      bool: {
+        must: [
+          { match: { base_currency: base_currency }},
+          { match: { counter_currency: counter_currency }},
+          { range: { date: { gte: from, lte: to } }}
+        ]
+      }
+    })
+  end
 end
