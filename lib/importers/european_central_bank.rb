@@ -7,8 +7,9 @@ module Importers
     SOURCE = "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-hist-90d.xml".freeze
 
     def initialize(options = {})
-      @counter = 0
-      @test_execution = options[:test_execution] || false
+      @rates_counter = 0
+      @days_counter = 0
+      @latest_n_days = options[:latest_n_days] || 365
       @silent = options[:silent] || false
       @calculate_combinations = options[:calculate_combinations] || false
       # The inverse rate is part of the set of combinations so the option can be implicit.
@@ -16,11 +17,7 @@ module Importers
     end
 
     def import_exchange_rates
-      if @test_execution
-        puts "EuropeanCentralBank#import_exchange_rates has been called but not executed."
-      else
-        time { set_exchange_rates(request_data) }
-      end
+      time { set_exchange_rates(request_data) }
     end
 
     def time
@@ -32,8 +29,6 @@ module Importers
       end
     end
 
-    # private
-
     def request_data
       xml_data = HTTParty.get(self.class::SOURCE).body
       # TODO: Raise an error if the response is not in the expected format.
@@ -43,6 +38,7 @@ module Importers
     def set_exchange_rates(data)
       base_currency = 'EUR'
       data.each do |data_for_day|
+        break if @latest_n_days == @days_counter
         date = Date.parse(data_for_day['time'])
         day_data = data_for_day['Cube']
 
@@ -65,14 +61,18 @@ module Importers
             )
           end
         end
+        @days_counter += 1
       end
-      puts "\n#{@counter} exchange rates set" unless @silent
+      unless @silent
+        puts "\nImported #{@days_counter} days of data. " \
+          "#{@rates_counter} exchange rates set."
+      end
       @counter = 0
     end
 
     def set_rate(date, base_currency, counter_currency, value)
       ExchangeRate.set(date, base_currency, counter_currency, value)
-      @counter += 1
+      @rates_counter += 1
       print "." unless @silent
     end
 

@@ -5,11 +5,10 @@ class ExchangeRateJob
     source = options[:source] || :ECB
     case source
     when :ECB
-      importer = Importers::EuropeanCentralBank.new({
-        test_execution: true,
+      Importers::EuropeanCentralBank.new({
+        latest_n_days: 1,
         calculate_combinations: true
-      })
-      importer.import_exchange_rates
+      }).import_exchange_rates
     else
       raise "The ExchangeRateJob does not know how " \
         "to handle source #{source}."
