@@ -16,6 +16,15 @@ module Importers
       @calculate_inverse = @calculate_combinations || options[:calculate_inverse] || false
     end
 
+    def settings
+      {
+        latest_n_days: @latest_n_days,
+        silent: @silent,
+        calculate_combinations: @calculate_combinations,
+        calculate_inverse: @calculate_inverse
+      }
+    end
+
     def import_exchange_rates
       time { set_exchange_rates(request_data) }
     end

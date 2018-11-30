@@ -2,20 +2,21 @@ require 'rails_helper'
 require 'rake'
 Rails.application.load_tasks
 
-describe Rate do
+RSpec.describe Rate do
   before(:context) do
     ExchangeRate.set(Date.parse('2018-11-23'), 'EUR', 'GBP', '0.8848')
     ExchangeRate.set(Date.parse('2018-11-26'), 'EUR', 'GBP', '0.8844')
     ExchangeRate.set(Date.parse('2018-11-27'), 'EUR', 'GBP', '0.88748')
+    sleep(1) # Let Elasticsearch catch up.
   end
 
   after(:context) do
     `bundle exec rake elasticsearch:remove_data -s`
+    sleep(1) # Let Elasticsearch catch up.
   end
 
   describe '.currencies' do
     it 'should return an array of Currencies' do
-      sleep(1.second)
       currencies = ExchangeRate.currencies
       expect(currencies).to be_an(Array)
       returned_classes = currencies.map(&:class).uniq
@@ -23,8 +24,7 @@ describe Rate do
       expect(returned_classes[0]).to eq(Currency)
     end
     it 'should include the available currency codes' do
-      sleep(1.second)
-      expect(ExchangeRate.currencies.map(&:code)).to eq(['EUR', 'GBP'])
+      expect(ExchangeRate.currencies.map(&:code)).to include('EUR', 'GBP')
     end
   end
 
@@ -38,7 +38,7 @@ describe Rate do
       it 'should not duplicate the data in the store' do
         2.times do
           ExchangeRate.set(Date.today, 'CCC', 'DDD', 1.2345)
-          sleep(1.second)
+          sleep(1.second) # Let Elasticsearch catch up.
           expect(
             ExchangeRate.repository.exact_match(Date.today, 'CCC', 'DDD').count
           ).to eq(1)
@@ -52,7 +52,7 @@ describe Rate do
           ExchangeRate.repository.exact_match(Date.today, 'EEE', 'FFF').count
         ).to eq(0)
         ExchangeRate.set(Date.today, 'EEE', 'FFF', 1.2345)
-        sleep(1.second)
+        sleep(1.second) # Let Elasticsearch catch up.
         expect(
           ExchangeRate.repository.exact_match(Date.today, 'EEE', 'FFF').count
         ).to eq(1)
@@ -77,7 +77,10 @@ describe Rate do
       it 'should raise an error' do
         expect {
           ExchangeRate.find_rate(Date.today, 'GGG', 'HHH')
-        }.to raise_error("GGG in HHH on #{Date.today} is unknown.")
+        }.to raise_error(
+          ExchangeRate::NotFound,
+          "The exchange rate for GGG in HHH on #{Date.today} is unknown."
+        )
       end
     end
   end
@@ -133,7 +136,10 @@ describe Rate do
       it 'should raise an error' do
         expect do
           ExchangeRate.at(Date.today, 'III', 'JJJ')
-        end.to raise_error("III in JJJ on #{Date.today} is unknown.")
+        end.to raise_error(
+          ExchangeRate::NotFound,
+          "The exchange rate for III in JJJ on #{Date.today} is unknown."
+        )
       end
     end
   end
