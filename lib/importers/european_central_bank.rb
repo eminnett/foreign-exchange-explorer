@@ -93,12 +93,12 @@ module Importers
         combinations << {
           base_currency: base_rate['currency'],
           counter_currency: datum['currency'],
-          rate: base_rate['rate'].to_f / datum['rate'].to_f
+          rate: datum['rate'].to_f / base_rate['rate'].to_f
         }
         combinations << {
           base_currency: datum['currency'],
           counter_currency: base_rate['currency'],
-          rate: datum['rate'].to_f / base_rate['rate'].to_f
+          rate: base_rate['rate'].to_f / datum['rate'].to_f
         }
       end
       combinations + calculate_combinations!(data)
