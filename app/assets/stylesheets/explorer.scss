@@ -1,0 +1,167 @@
+@import url('https://fonts.googleapis.com/css?family=Merriweather');
+
+$TEXT_COLOUR:            #666666;
+$WHITE:                  #ffffff;
+$PRIMARY_COLOUR:         #156A0B;
+$ACCENT_COLOUR:          #E9EBE0;
+$SECONDARY_COLOUR:       #C1D1BB;
+
+body {
+    color: $TEXT_COLOUR;
+    font-family: 'Merriweather', serif;
+    display: flex;
+    justify-content: center;
+    margin: 0;
+}
+
+:focus {
+    border: none;
+    box-shadow: none;
+    outline: none;
+}
+
+button {
+    width: 100%;
+}
+
+button, .button {
+    text-align: center;
+    padding: 5px;
+    font-size: 1em;
+    border: 1px solid $PRIMARY_COLOUR;
+    background: $WHITE;
+    color: $PRIMARY_COLOUR;
+    &:focus {
+        border: 1px solid $PRIMARY_COLOUR;
+    }
+    &:hover {
+        background: $SECONDARY_COLOUR;
+        cursor: pointer;
+    }
+    &:disabled,
+    &[disabled]{
+      border: 1px solid $ACCENT_COLOUR;
+      color: $ACCENT_COLOUR;
+      background: $WHITE;
+      cursor: default;
+    }
+}
+
+input {
+    width: 100%;
+    font-size: 1em;
+    padding: 5px;
+    border: 1px solid $SECONDARY_COLOUR;
+    &:focus {
+        border: 1px solid $PRIMARY_COLOUR;
+        box-shadow: none;
+        outline: none;
+    }
+}
+
+select {
+    cursor: pointer;
+    font-size: 1em;
+    color: $PRIMARY_COLOUR;
+    width: 100%;
+    &:focus {
+        border: 1px solid $PRIMARY_COLOUR;
+    }
+}
+
+.loading-bar {
+    background-color: $SECONDARY_COLOUR;
+    height: 0;
+}
+
+section {
+    border: 2px solid $ACCENT_COLOUR;
+    border-top: none;
+}
+
+.app-wrapper {
+    max-width: 600px;
+    min-width: 400px;
+    margin: 10px;
+}
+
+.heading {
+    background: $PRIMARY_COLOUR;
+    color: $ACCENT_COLOUR;
+    border: 2px solid $PRIMARY_COLOUR;
+    padding: 20px;
+    margin-bottom: 0;
+}
+
+.form-wrapper {
+    display: flex;
+    justify-content: center;
+
+    .DayPicker {
+        display: flex;
+        justify-content: center;
+    }
+
+    .DayPicker-wrapper {
+        max-width: 300px;
+    }
+    .DayPicker-Day--selected:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside) {
+        background-color: $PRIMARY_COLOUR;
+        &:hover {
+            background-color: $PRIMARY_COLOUR;
+        }
+    }
+    .DayPicker:not(.DayPicker--interactionDisabled)
+    .DayPicker-Day:not(.DayPicker-Day--disabled):not(.DayPicker-Day--selected):not(.DayPicker-Day--outside):hover {
+        background-color: $SECONDARY_COLOUR;
+    }
+}
+
+.inputs-wrapper {
+    margin-top: 6px;
+    margin-right: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 290px;
+
+    .label {
+        padding-top: 10px;
+        font-weight: 500;
+        font-size: 1.15em;
+    }
+
+    .amount-input {
+        input {
+            margin-top: 10px;
+            margin-top: 10px;
+            width: 96%;
+            color: $PRIMARY_COLOUR;
+        }
+    }
+}
+
+.results-wrapper {
+    padding: 20px;
+    .results {
+        font-size: 1.2em;
+        text-align: center;
+        line-height: 2em;
+        padding-bottom: 10px;
+    }
+}
+
+@media screen and (max-width: 540px) {
+    .heading h1 {
+        font-size: 1.6em;
+    }
+
+    .form-wrapper {
+        flex-direction: column;
+    }
+
+    .inputs-wrapper {
+        padding: 20px;
+        padding-top: 0;
+    }
+}

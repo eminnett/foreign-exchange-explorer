@@ -120,9 +120,19 @@ RSpec.describe Importers::EuropeanCentralBank do
         .to match_array(['USD']*3 + ['JPY']*3 + ['BGN']*3 + ['CZK']*3)
       expect(counter_currencies)
         .to match_array(['USD']*3 + ['JPY']*3 + ['BGN']*3 + ['CZK']*3)
+      tested_usd_jpy = tested_jpy_usd = false
       combinations.each do |c|
         expect(c[:base_currency]).to_not eq(c[:counter_currencies])
+        if c[:base_currency] == 'USD' && c[:counter_currency] == 'JPY'
+          tested_usd_jpy = true
+          expect(c[:rate]).to eq(128.66 / 1.1328)
+        elsif c[:base_currency] == 'JPY' && c[:counter_currency] == 'USD'
+          tested_jpy_usd = true
+          expect(c[:rate]).to eq(1.1328 / 128.66)
+        end
       end
+      expect(tested_usd_jpy).to eq(true)
+      expect(tested_jpy_usd).to eq(true)
     end
   end
 end

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::CurrenciesController, type: :controller do
+RSpec.describe DatesController, type: :controller do
   before(:context) do
     ExchangeRate.set(Date.parse('2018-11-23'), 'EUR', 'GBP', '0.8848')
     ExchangeRate.set(Date.parse('2018-11-26'), 'EUR', 'GBP', '0.8844')
@@ -19,15 +19,19 @@ RSpec.describe Api::V1::CurrenciesController, type: :controller do
       expect(response.header['Content-Type']).to include('application/json')
     end
 
-    it "returns an array of currencies and symbols" do
+    it "returns an array of dates" do
       get :show
       res = JSON.parse(response.body)
       expect(res).to be_an(Array)
-      expect(res.first.keys).to match_array(['id', 'code', 'symbol'])
-      currencies = res.map {|datum| datum['code']}
-      symbols = res.map {|datum| datum['symbol']}
-      expect(currencies).to match_array(['EUR', 'GBP'])
-      expect(symbols).to match_array(['€', '£'])
+      res.each do |date|
+        expect{ Date.parse(date) }.to_not raise_error
+      end
+    end
+
+    it "returns all of the available dates" do
+      get :show
+      res = JSON.parse(response.body)
+      expect(res).to match_array(['2018-11-23', '2018-11-26', '2018-11-27'])
     end
   end
 end

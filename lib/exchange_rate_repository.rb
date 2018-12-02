@@ -16,7 +16,15 @@ class ExchangeRateRepository
   def all(options = {})
     return [] unless index_exists?
     search({ from: 0, size: 10_000, query: { match_all: { } } },
-           { sort: 'date' }.merge(options))
+      { sort: 'date' }.merge(options))
+  end
+
+  def all_eur
+    return [] unless index_exists?
+    search(
+      { from: 0, size: 10_000, query: { match: { base_currency: 'EUR' } }},
+      { sort: 'date' }
+    )
   end
 
   def exact_match(date, base_currency, counter_currency)
@@ -34,7 +42,7 @@ class ExchangeRateRepository
 
   def between_dates(from, to, base_currency, counter_currency)
     return [] unless index_exists?
-    search(from: 0, size: 10_000, query: {
+    search({ from: 0, size: 10_000, query: {
       bool: {
         must: [
           { match: { base_currency: base_currency }},
@@ -42,6 +50,6 @@ class ExchangeRateRepository
           { range: { date: { gte: from, lte: to } }}
         ]
       }
-    })
+    }}, { sort: 'date' })
   end
 end
