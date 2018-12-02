@@ -4,16 +4,8 @@ class Rate
   include ActiveModel::Model
   include ActiveModel::Validations
 
-  ATTRIBUTES = %i[
-    id
-    _id
-    base_currency
-    counter_currency
-    value
-    date
-  ].freeze
+  ATTRIBUTES = %i[id _id base_currency counter_currency value date].freeze
   attr_accessor(*ATTRIBUTES)
-  attr_reader :attributes
 
   validates :id, presence: true
   validates :base_currency, presence: true

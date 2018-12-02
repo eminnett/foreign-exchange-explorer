@@ -4,21 +4,15 @@ class Currency
   include ActiveModel::Model
   include ActiveModel::Validations
 
-  ATTRIBUTES = %i[
-    id
-    _id
-    code
-    symbol
-  ].freeze
+  ATTRIBUTES = %i[id _id code symbol].freeze
   attr_accessor(*ATTRIBUTES)
-  attr_reader :attributes
 
   validates :id, presence: true
   validates :code, presence: true
 
   def self.mapping
     @mapping ||= begin
-      file_path = File.join(Rails.root, "/db/codes_and_symbols.json")
+      file_path = Rails.root.join("db", "codes_and_symbols.json")
       JSON.parse(File.read(file_path))
     end
   end
