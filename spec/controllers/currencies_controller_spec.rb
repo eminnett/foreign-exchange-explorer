@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Api::V1::CurrenciesController, type: :controller do
+RSpec.describe CurrenciesController, type: :controller do
   before(:context) do
     ExchangeRate.set(Date.parse('2018-11-23'), 'EUR', 'GBP', '0.8848')
     ExchangeRate.set(Date.parse('2018-11-26'), 'EUR', 'GBP', '0.8844')
