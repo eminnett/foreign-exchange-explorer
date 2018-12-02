@@ -200,7 +200,7 @@ The project includes three gems used to analyse the state of the application and
 
 - Bundler Audit: Used to determine whether the installed gems contain security vulnerabilities. Run by calling `bundle exec rake bundler:audit`.
 - Rubocob: Used to perform static analysis on the ruby code in the project. Run by calling `bundle exec rubocop`.
-- Rspec: Used to execute the Ruby automated tests. Run by calling `bundle exec spec`.
+- Rspec: Used to execute the Ruby automated tests. Run by calling `bundle exec rspec`.
 
 The three rake tasks have been chained together so they run in sequence when executing `bundle exec rake`. The chained task will fail at the first hurdle and exit.
 
