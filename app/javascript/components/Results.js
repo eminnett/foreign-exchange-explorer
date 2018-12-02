@@ -11,7 +11,9 @@ class Results extends React.Component {
 
     return (
       <div className='results'>
-        {`On ${this.props.date}, ${baseMoney} was worth ${exchangedMoney}.`}
+        {`On ${this.props.date},`}
+        <br />
+        {`${baseMoney} was worth ${exchangedMoney}.`}
       </div>
     );
   }

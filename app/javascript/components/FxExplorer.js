@@ -28,44 +28,55 @@ class FxExplorer extends React.Component {
   render () {
     return (
       <section>
-        <DateSelector />
-        <Amount />
-        <CurrencySelector
-          action={setBaseCurrency}
-          selection={this.props.baseCurrency}
-          disabledOption={this.props.counterCurrency}
-          placeholder={'Please select currency to convert from'}
-        />
-        <CurrencySelector
-          action={setCounterCurrency}
-          selection={this.props.counterCurrency}
-          disabledOption={this.props.baseCurrency}
-          placeholder={'Please select currency to convert to'}
-        />
-        <button
-          type='button'
-          onClick={this.handleSubmission.bind(this)}
-          disabled={this.props.disableSubmission}
-        >Calculate</button>
-        { this.props.showResults && <Results /> }
-        { this.props.showGraph && <RateGraph /> }
+        <div className='form-wrapper'>
+          <DateSelector />
+          <div className='inputs-wrapper'>
+            <Amount />
+            <div className='label'>
+              Convert from this currency:
+            </div>
+            <CurrencySelector
+              action={setBaseCurrency}
+              selection={this.props.baseCurrency}
+              disabledOption={this.props.counterCurrency}
+              placeholder={'Please select currency'}
+            />
+            <div className='label'>
+              To this currency:
+            </div>
+            <CurrencySelector
+              action={setCounterCurrency}
+              selection={this.props.counterCurrency}
+              disabledOption={this.props.baseCurrency}
+              placeholder={'Please select currency'}
+            />
+            <button
+              type='button'
+              onClick={this.handleSubmission.bind(this)}
+              disabled={!this.props.enableSubmission}
+            >Calculate</button>
+          </div>
+        </div>
+        <div className='results-wrapper'>
+          { this.props.showResults && <Results /> }
+          { this.props.showGraph && <RateGraph /> }
+        </div>
       </section>
     );
   }
 }
 
 function mapStateToProps (state) {
-  const baseCurrencySet = typeof state.baseCurrency === 'string';
-  const counterCurrencySet = typeof state.counterCurrency === 'string';
-  const disableSubmission =
-    !(state.amount && state.selectedDate && baseCurrencySet && counterCurrencySet);
+  const baseCurrencySet =  state.baseCurrency;
+  const counterCurrencySet = state.counterCurrency;
+  const enableSubmission = state.amount > 0 && baseCurrencySet && counterCurrencySet;
   const currenciesChanged =
     state.baseCurrency !== state.exchangeRate.base_currency ||
     state.counterCurrency !== state.exchangeRate.counter_currency;
   return {
     baseCurrency: (baseCurrencySet ? state.baseCurrency : ''),
     counterCurrency: (counterCurrencySet ? state.counterCurrency : ''),
-    disableSubmission,
+    enableSubmission,
     showResults: (typeof state.exchangeRate !== 'undefined' &&
       Object.keys(state.graphData).length > 0) && !currenciesChanged,
     showGraph: (typeof state.graphData !== 'undefined' &&

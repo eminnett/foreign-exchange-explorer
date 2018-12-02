@@ -3,8 +3,9 @@ import { receiveDates } from './dates';
 import { receiveCurrencies } from './currencies';
 import { setEchangeRate } from './exchangeRate';
 import { setGraphData } from './graphData';
-import { setDefaultDate } from './selectedDate';
+import { selectDate, setDefaultDate } from './selectedDate';
 import { showLoading, hideLoading } from 'react-redux-loading';
+import { formatDate } from '../utils/exchange_rates_api';
 
 export function populateData() {
   return (dispatch) => {
@@ -14,9 +15,11 @@ export function populateData() {
       let receivedDates = false;
       let receivedCurrencies = false;
       getDates().then((dates) => {
-        const lastDate = dates[Object.keys(dates).reverse()[0]];
-        dispatch(setDefaultDate(lastDate));
-        dispatch(receiveDates(dates));
+        if (dates.length > 0) {
+          const lastDate = dates[Object.keys(dates).reverse()[0]];
+          dispatch(setDefaultDate(lastDate));
+          dispatch(receiveDates(dates));
+        }
         receivedDates = true;
         if (receivedCurrencies) {
           resolve();
@@ -51,4 +54,13 @@ export function populateGraphData(baseCurrency, counterCurrency) {
         dispatch(setGraphData(graphData));
       });
   };
+}
+
+export function changeDate(date) {
+  return (dispatch, getState) => {
+    const exchangeRate = Object.values(getState().graphData)
+      .filter(rate => rate.date === formatDate(date))[0];
+    dispatch(selectDate(date));
+    dispatch(setEchangeRate(exchangeRate));
+  }
 }

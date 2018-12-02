@@ -9,14 +9,16 @@ class Amount extends React.Component {
 
   render () {
     return (
-      <div className='amount-inout'>
-        Amount:
+      <div className='amount-input'>
+        <div className='label'>
+          Amount to Convert:
+        </div>
         <input
           value={this.props.amount}
           type='number'
-          min='0'
+          min='0.01'
           step='0.01'
-          placeholder='Please choose how much to convert.'
+          placeholder='How much to convert?'
           onChange={this.handleChange.bind(this)}
         />
       </div>
@@ -26,7 +28,7 @@ class Amount extends React.Component {
 
 function mapStateToProps (state) {
   return {
-    amount: state.amount
+    amount: state.amount > 0 ? state.amount : undefined
   };
 }
 

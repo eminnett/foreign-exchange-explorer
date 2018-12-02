@@ -50,6 +50,7 @@ gem "serviceworker-rails", "~> 0.5.5"
 gem "webpacker", "~> 3.5"
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
+gem "uglifier", "~> 4.1"
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

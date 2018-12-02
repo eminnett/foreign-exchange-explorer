@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { populateData } from '../actions/shared';
 import LoadingBar from 'react-redux-loading'
 import FxExplorer from './FxExplorer';
-// import './App.scss';
 
 class ExplorerApp extends React.Component {
   componentDidMount() {

@@ -9,24 +9,26 @@ class CurrencySelector extends React.Component {
 
   render () {
     return (
-      <select
-        value={this.props.selection}
-        onChange={this.handleChange.bind(this)}
-      >
-        <option
-          value=''
-          disabled={this.props.selectionMade}
-        >{this.props.placeholder}</option>
-        { Object.values(this.props.currencies).map((currency) => (
+      <div className='select-wrapper'>
+        <select
+          value={this.props.selection}
+          onChange={this.handleChange.bind(this)}
+        >
           <option
-            key={currency.id}
-            value={currency.code}
-            disabled={currency.code === this.props.disabledOption}
-          >
-            {currency.code}
-          </option>
-        ))}
-      </select>
+            value=''
+            disabled={this.props.selectionMade}
+          >{this.props.placeholder}</option>
+          { Object.values(this.props.currencies).map((currency) => (
+            <option
+              key={currency.id}
+              value={currency.code}
+              disabled={currency.code === this.props.disabledOption}
+            >
+              {currency.code}
+            </option>
+          ))}
+        </select>
+      </div>
     );
   }
 }

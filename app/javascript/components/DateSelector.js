@@ -2,13 +2,16 @@ import React from "react";
 import { connect } from 'react-redux';
 import DayPicker from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
-import { selectDate } from '../actions/selectedDate';
-import { formatDate } from '../utils/exchange_rates_api'
+import { changeDate } from '../actions/shared';
+import { formatDate } from '../utils/exchange_rates_api';
 
 class DateSelector extends React.Component {
-  handleSelection = (day, { selected }) => {
-    const selection = selected ? undefined : day;
-    this.props.dispatch(selectDate(selection));
+  handleSelection = (day, modifiers = {}) => {
+    if (modifiers.disabled) {
+      return;
+    }
+    const selection = modifiers.selected ? undefined : day;
+    this.props.dispatch(changeDate(selection));
   };
 
   render () {
@@ -38,7 +41,7 @@ class DateSelector extends React.Component {
       <DayPicker
         fromMonth={firstMonth}
         toMonth={lastMonth}
-        initialMonth={lastMonth}
+        initialMonth={selection}
         disabledDays={disabledDays}
         selectedDays={selection}
         onDayClick={this.handleSelection.bind(this)}

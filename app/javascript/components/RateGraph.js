@@ -8,12 +8,7 @@ class RateGraph extends React.Component {
     return (
       <LineChart
         data={this.props.data}
-        // prefix={this.props.currencySymbol}
-        // curve={false}
-        // thousands={','}
-        // options={{ scales: {yAxes: [{ticks: {min: this.props.min, max: this.props.max}}]}}}
-        // min={this.props.min}
-        // max={this.props.max}
+        options={this.props.options}
       />
     );
   }
@@ -43,10 +38,11 @@ function mapStateToProps (state) {
   return {
     selectedDate: state.selectedDate,
     data: {
-      datasets: [{label, data}],
+      datasets: [{label, data, borderColor: '#156A0B', backgroundColor: 'rgba(21,106,11, 0.3)'}],
       labels
     },
-    currencySymbol, min, max
+    options: {
+    }
   };
 }
 
