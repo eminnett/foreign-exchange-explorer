@@ -37,7 +37,7 @@ module Importers
       start = Time.zone.now
       yield
       ellapsed_minutes = (Time.zone.now - start) * 24.0 * 60.0
-      puts "\nProcess took #{ellapsed_minutes.round(2)} minutes to complete." unless @silent
+      log "\nProcess took #{ellapsed_minutes.round(2)} minutes to complete."
     end
 
     def request_data
@@ -76,10 +76,7 @@ module Importers
         end
         @days_counter += 1
       end
-      unless @silent
-        puts "\nImported #{@days_counter} days of data. " \
-          "#{@rates_counter} exchange rates set."
-      end
+      log "\nImported #{@days_counter} days of data. #{@rates_counter} exchange rates set."
       @counter = 0
     end
 
@@ -107,6 +104,12 @@ module Importers
         }
       end
       combinations + calculate_combinations!(data)
+    end
+
+    private
+
+    def log(message)
+      logger.info(message) unless @silent
     end
   end
 end

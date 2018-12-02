@@ -12,6 +12,6 @@ sample_data.each do |data_for_day|
     counter_currency = datum["currency"]
     value = datum["rate"]
     rate = ExchangeRate.set(date, base_currency, counter_currency, value)
-    puts "Set rate: #{rate}"
+    logger.info("Set rate: #{rate}")
   end
 end
