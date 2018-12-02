@@ -74,6 +74,11 @@ select {
     height: 0;
 }
 
+.conditional-line-break:after {
+    content:"\a";
+    white-space: pre;
+}
+
 section {
     border: 2px solid $ACCENT_COLOUR;
     border-top: none;
@@ -155,7 +160,10 @@ section {
     .heading h1 {
         font-size: 1.6em;
     }
-
+    .conditional-line-break:after {
+        content: ' ';
+        white-space: normal;
+    }
     .form-wrapper {
         flex-direction: column;
     }
