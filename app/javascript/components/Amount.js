@@ -28,7 +28,7 @@ class Amount extends React.Component {
 
 function mapStateToProps (state) {
   return {
-    amount: state.amount > 0 ? state.amount : undefined
+    amount: state.amount > 0 ? state.amount : ''
   };
 }
 

@@ -58,9 +58,13 @@ export function populateGraphData(baseCurrency, counterCurrency) {
 
 export function changeDate(date) {
   return (dispatch, getState) => {
-    const exchangeRate = Object.values(getState().graphData)
-      .filter(rate => rate.date === formatDate(date))[0];
     dispatch(selectDate(date));
-    dispatch(setEchangeRate(exchangeRate));
+    
+    const graphData = getState().graphData;
+    if (Object.keys(graphData) > 0) {
+      const exchangeRate = Object.values(getState().graphData)
+        .filter(rate => rate.date === formatDate(date))[0];
+      dispatch(setEchangeRate(exchangeRate));
+    }
   }
 }
