@@ -16,8 +16,7 @@ module Importers
       @calculate_combinations = options[:calculate_combinations] || false
       # The inverse rate is part of the set of combinations so the
       # option can be set implicitly.
-      @calculate_inverse =
-        @calculate_combinations || options[:calculate_inverse] || false
+      @calculate_inverse = @calculate_combinations || options[:calculate_inverse] || false
     end
 
     def settings
@@ -30,7 +29,7 @@ module Importers
     end
 
     def import_exchange_rates
-      time { set_exchange_rates(request_data) }
+      time { process_exchange_rates(request_data) }
     end
 
     def time
@@ -46,34 +45,11 @@ module Importers
       Hash.from_xml(xml_data)["Envelope"]["Cube"]["Cube"]
     end
 
-    def set_exchange_rates(data)
-      base_currency = "EUR"
+    def process_exchange_rates(data)
       data.each do |data_for_day|
         break if @latest_n_days == @days_counter
 
-        date = Date.parse(data_for_day["time"])
-        day_data = data_for_day["Cube"]
-
-        day_data.each do |datum|
-          set_rate(date, base_currency, datum["currency"], datum["rate"])
-          if @calculate_inverse
-            inverse_rate = 1 / datum["rate"].to_f
-            set_rate(date, datum["currency"], base_currency, inverse_rate)
-          end
-        end
-
-        # NB: Beware, this is a very expensive operation!
-        if @calculate_combinations
-          combinations = calculate_combinations!(day_data)
-          combinations.each do |datum|
-            set_rate(
-              date,
-              datum[:base_currency],
-              datum[:counter_currency],
-              datum[:rate]
-            )
-          end
-        end
+        process_day_of_data(data_for_day)
         @days_counter += 1
       end
       log "\nImported #{@days_counter} days of data. #{@rates_counter} exchange rates set."
@@ -83,30 +59,65 @@ module Importers
     def set_rate(date, base_currency, counter_currency, value)
       ExchangeRate.set(date, base_currency, counter_currency, value)
       @rates_counter += 1
-      print "." unless @silent
+      log "." unless @silent
+    end
+
+    def process_day_of_data(data_for_day)
+      base_currency = "EUR"
+      date = Date.parse(data_for_day["time"])
+      day_data = data_for_day["Cube"]
+
+      day_data.each do |datum|
+        set_rate(date, base_currency, datum["currency"], datum["rate"])
+        process_inverse(date, base_currency, datum) if @calculate_inverse
+      end
+
+      # NB: Beware, this is a very expensive operation!
+      process_combinations!(date, day_data) if @calculate_combinations
+    end
+
+    def process_inverse(date, base_currency, datum)
+      inverse_rate = 1 / datum["rate"].to_f
+      set_rate(date, datum["currency"], base_currency, inverse_rate)
+    end
+
+    def process_combinations!(date, day_data)
+      combinations = calculate_combinations!(day_data)
+      combinations.each do |datum|
+        set_rate(
+          date,
+          datum[:base_currency],
+          datum[:counter_currency],
+          datum[:rate]
+        )
+      end
     end
 
     def calculate_combinations!(data)
       return [] unless data.count > 1 # No combinations to calculate.
 
-      combinations = []
       base_rate = data.slice!(0)
-      data.each do |datum|
-        combinations << {
-          base_currency:    base_rate["currency"],
-          counter_currency: datum["currency"],
-          rate:             datum["rate"].to_f / base_rate["rate"].to_f
-        }
-        combinations << {
-          base_currency:    datum["currency"],
-          counter_currency: base_rate["currency"],
-          rate:             base_rate["rate"].to_f / datum["rate"].to_f
-        }
-      end
-      combinations + calculate_combinations!(data)
+      calculate_pairs(base_rate, data).flatten + calculate_combinations!(data)
     end
 
     private
+
+    def calculate_pairs(base_rate, data)
+      data.map do |datum|
+        [
+          {
+            base_currency:    base_rate["currency"],
+            counter_currency: datum["currency"],
+            rate:             datum["rate"].to_f / base_rate["rate"].to_f
+          },
+          {
+            base_currency:    datum["currency"],
+            counter_currency: base_rate["currency"],
+            rate:             base_rate["rate"].to_f / datum["rate"].to_f
+          }
+        ]
+      end
+    end
 
     def log(message)
       logger.info(message) unless @silent

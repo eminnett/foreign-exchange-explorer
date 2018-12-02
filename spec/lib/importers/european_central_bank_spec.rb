@@ -22,7 +22,7 @@ RSpec.describe Importers::EuropeanCentralBank do
     end
   end
 
-  describe "#set_exchange_rates" do
+  describe "#process_exchange_rates" do
     let(:day_of_data) { [{'time': "2018-11-27", 'Cube': data}] }
 
     before(:context) do
@@ -44,7 +44,7 @@ RSpec.describe Importers::EuropeanCentralBank do
 
       it "sets one exchange rate per datum in the data" do
         expect(importer).to receive(:set_rate).exactly(data.count).times
-        importer.set_exchange_rates(day_of_data.map(&:stringify_keys))
+        importer.process_exchange_rates(day_of_data.map(&:stringify_keys))
       end
     end
 
@@ -64,7 +64,7 @@ RSpec.describe Importers::EuropeanCentralBank do
 
       it "sets two exchange rates per datum" do
         expect(importer).to receive(:set_rate).exactly(data.count * 2).times
-        importer.set_exchange_rates(day_of_data.map(&:stringify_keys))
+        importer.process_exchange_rates(day_of_data.map(&:stringify_keys))
       end
 
       it "sets the implicit exchange rate and its inverse for each datum" do
@@ -79,7 +79,7 @@ RSpec.describe Importers::EuropeanCentralBank do
           .to receive(:set_rate).with(day, "EUR", "USD", "1.1328")
         expect(importer)
           .to receive(:set_rate).with(day, "USD", "EUR", 1 / 1.1328)
-        importer.set_exchange_rates(sample_data)
+        importer.process_exchange_rates(sample_data)
       end
     end
 
@@ -100,7 +100,7 @@ RSpec.describe Importers::EuropeanCentralBank do
         "(including the implicit rates and their inverses)" do
         num_combinations = data.count * (data.count - 1) + data.count * 2
         expect(importer).to receive(:set_rate).exactly(num_combinations).times
-        importer.set_exchange_rates(day_of_data.map(&:stringify_keys))
+        importer.process_exchange_rates(day_of_data.map(&:stringify_keys))
       end
     end
   end
