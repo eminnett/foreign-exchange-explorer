@@ -17,9 +17,9 @@ RSpec.describe ExchangeRateJob, type: :job do
 
   context "when an unhandled source is provided" do
     it "raises an exception" do
-      expect do
+      expect {
         ExchangeRateJob.new.perform(source: :FOO)
-      end.to raise_error(
+      }.to raise_error(
         "The ExchangeRateJob does not know how to handle source FOO."
       )
     end

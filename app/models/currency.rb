@@ -35,9 +35,8 @@ class Currency
 
   def attributes
     ATTRIBUTES.each_with_object({}) do |attr, hash|
-      if value = send(attr)
-        hash[attr] = value
-      end
+      value = send(attr)
+      hash[attr] = value if value
     end
   end
   alias to_hash attributes

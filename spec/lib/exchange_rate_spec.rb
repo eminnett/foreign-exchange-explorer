@@ -93,9 +93,9 @@ RSpec.describe Rate do
 
     context "when the rate does not exist in the data store" do
       it "should raise an error" do
-        expect do
+        expect {
           ExchangeRate.find_rate(Time.zone.today, "GGG", "HHH")
-        end.to raise_error(
+        }.to raise_error(
           ExchangeRate::NotFound,
           "The exchange rate for GGG in HHH on #{Time.zone.today} is unknown."
         )
@@ -152,9 +152,9 @@ RSpec.describe Rate do
     end
     context "when the rate does not exist in the data store" do
       it "should raise an error" do
-        expect do
+        expect {
           ExchangeRate.at(Time.zone.today, "III", "JJJ")
-        end.to raise_error(
+        }.to raise_error(
           ExchangeRate::NotFound,
           "The exchange rate for III in JJJ on #{Time.zone.today} is unknown."
         )

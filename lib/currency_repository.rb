@@ -20,12 +20,11 @@ class CurrencyRepository
 
   def store_unique(code)
     matches = index_exists? ? search(query: {match: {code: code}}) : nil
-    save(Currency.new(code: code)) if !index_exists? || matches.count == 0
+    save(Currency.new(code: code)) if !index_exists? || matches.count.zero?
     # Delete duplicates caused by the NRT nature of Elasticsearch.
-    if matches && matches.count > 1
-      matches.each_with_index do |currency, i|
-        delete(currency, ignore: 404) if i > 0
-      end
+    return unless matches && matches.count > 1
+    matches.each_with_index do |currency, i|
+      delete(currency, ignore: 404) if i.positive?
     end
   end
 end
