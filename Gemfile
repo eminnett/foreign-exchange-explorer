@@ -46,7 +46,6 @@ gem "whenever", "~> 0.10.0"
 gem "httparty", "~> 0.16.3"
 
 # Client-side dependencies
-gem "serviceworker-rails", "~> 0.5.5"
 gem "webpacker", "~> 3.5"
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
