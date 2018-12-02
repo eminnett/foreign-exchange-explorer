@@ -20,9 +20,9 @@ The brief for this project was as follows:
 
 Rather than writing a standalone ruby library (in the form of a gem), I chose to write the code that responds to the brief as the core logic within a Rails API. I also chose to include a React application that acts as a view on the exchange rate data store. This screenshot illustrates the interface for the client-side application.
 
-![Client Side View](client_side_view.png)
+![Client Side View](client_side_view.png =x600)
 
-In response to the brief:
+**In response to the brief:**
 
 The `ExchangeRate` class, `/lib/exchange_rate.rb`, acts as an interface for the Elasticsearch data store where the exchange rate data is stored locally. Data is imported via the `Importers::EuropeanCentralBank` class, `lib/importers/european_central_bank.rb`, which takes several options allowing for greater control around how the imported data is processed. These options are described in the 'Populating the Data Store' section of this document. Additional importers can be written for other sources of data as needs arise. These importers can be referenced inside `ExchangeRateJob#perform`, `/app/jobs/exchange_rate_job.rb`, where different importers can be used when performing the job. The `perform` method takes an options hash where the source can be declared (`{source: :ECB}` will use the EuropeanCentralBank importer for example).
 
@@ -57,7 +57,7 @@ The ECB feed contains rates for 33 currencies (including 'EUR'). As the time tak
 
 The primary components of the software architecture are illustrated below. This isn't an exhaustive entity diagram but does illustrate the flow of foreign exchange data through the server-side and client-side applications.
 
-![Entity Diagram](entity_diagram.png)
+![Entity Diagram](entity_diagram.png =800x)
 
 ### API
 
@@ -66,7 +66,7 @@ The following API endpoints are available via the Rails application and are used
 Get...
 `GET 'api/v1/exchange-rates/:base_currency/:counter_currency/?on=YYYY-MM-DD'`
 Example:
-```JSON
+```
 /* GET /api/v1/exchange-rates/EUR/GBP/?on='2018-11-26' */
 {
     "id": "f503af91-b294-4b97-b7ba-58f325023c76",
@@ -80,7 +80,7 @@ Example:
 Get...
 `GET 'api/v1/exchange-rates/:base_currency/:counter_currency/?from=YYYY-MM-DD&to=YYYY-MM-DD'`
 Example response:
-```JSON
+```
 /* GET /api/v1/exchange-rates/EUR/GBP/?from='2018-11-20'&to='2018-11-26' */
 [
     {
@@ -106,7 +106,7 @@ Example response:
 Get a list of all the currencies for which there are exchange rates in the data store sorted by the currency code alphabetically.
 `GET 'api/v1/currencies'`
 Example response:
-```JSON
+```
 /* GET 'api/v1/currencies' */
 [
     {
@@ -128,7 +128,7 @@ Example response:
 Get a list of all the dates for which there are exchange rates in the data store sorted chronologically.
 `GET 'api/v1/dates'`
 Example response:
-```JSON
+```
 /* GET 'api/v1/dates' */
 ["2018-08-31", "2018-09-03", "2018-09-04", "2018-09-05", ... ]
 ```
