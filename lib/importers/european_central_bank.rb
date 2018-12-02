@@ -34,9 +34,9 @@ module Importers
     end
 
     def time
-      start = DateTime.now
+      start = Time.zone.now
       yield
-      ellapsed_minutes = (DateTime.now - start) * 24.0 * 60.0
+      ellapsed_minutes = (Time.zone.now - start) * 24.0 * 60.0
       puts "\nProcess took #{ellapsed_minutes.round(2)} minutes to complete." unless @silent
     end
 

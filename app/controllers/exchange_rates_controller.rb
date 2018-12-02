@@ -6,8 +6,8 @@ class ExchangeRatesController < ApplicationController
     counter_currency = exchange_rate_params[:counter_currency]
     on = exchange_rate_params[:on]
     # Default to the range between today and 90 days ago.
-    from = exchange_rate_params[:from] || Date.today - 90.days
-    to = exchange_rate_params[:to] || Date.today
+    from = exchange_rate_params[:from] || Time.zone.today - 90.days
+    to = exchange_rate_params[:to] || Time.zone.today
 
     # Since there are defaults for 'from' and 'to',
     # providing 'on' trumps these defaults.

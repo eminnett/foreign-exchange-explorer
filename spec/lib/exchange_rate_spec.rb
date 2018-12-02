@@ -46,17 +46,17 @@ RSpec.describe Rate do
 
   describe ".set" do
     it "should return a Rate" do
-      rate = ExchangeRate.set(Date.today, "AAA", "BBB", 1.2345)
+      rate = ExchangeRate.set(Time.zone.today, "AAA", "BBB", 1.2345)
       expect(rate).to be_a(Rate)
     end
 
     context "when the rate exists in the data store" do
       it "should not duplicate the data in the store" do
         2.times do
-          ExchangeRate.set(Date.today, "CCC", "DDD", 1.2345)
+          ExchangeRate.set(Time.zone.today, "CCC", "DDD", 1.2345)
           sleep(1.second) # Let Elasticsearch catch up.
           expect(
-            ExchangeRate.repository.exact_match(Date.today, "CCC", "DDD").count
+            ExchangeRate.repository.exact_match(Time.zone.today, "CCC", "DDD").count
           ).to eq(1)
         end
       end
@@ -65,12 +65,12 @@ RSpec.describe Rate do
     context "when the rate does not exist in the data store" do
       it "should populate the rate data in the data store" do
         expect(
-          ExchangeRate.repository.exact_match(Date.today, "EEE", "FFF").count
+          ExchangeRate.repository.exact_match(Time.zone.today, "EEE", "FFF").count
         ).to eq(0)
-        ExchangeRate.set(Date.today, "EEE", "FFF", 1.2345)
+        ExchangeRate.set(Time.zone.today, "EEE", "FFF", 1.2345)
         sleep(1.second) # Let Elasticsearch catch up.
         expect(
-          ExchangeRate.repository.exact_match(Date.today, "EEE", "FFF").count
+          ExchangeRate.repository.exact_match(Time.zone.today, "EEE", "FFF").count
         ).to eq(1)
       end
     end
@@ -94,10 +94,10 @@ RSpec.describe Rate do
     context "when the rate does not exist in the data store" do
       it "should raise an error" do
         expect do
-          ExchangeRate.find_rate(Date.today, "GGG", "HHH")
+          ExchangeRate.find_rate(Time.zone.today, "GGG", "HHH")
         end.to raise_error(
           ExchangeRate::NotFound,
-          "The exchange rate for GGG in HHH on #{Date.today} is unknown."
+          "The exchange rate for GGG in HHH on #{Time.zone.today} is unknown."
         )
       end
     end
@@ -153,10 +153,10 @@ RSpec.describe Rate do
     context "when the rate does not exist in the data store" do
       it "should raise an error" do
         expect do
-          ExchangeRate.at(Date.today, "III", "JJJ")
+          ExchangeRate.at(Time.zone.today, "III", "JJJ")
         end.to raise_error(
           ExchangeRate::NotFound,
-          "The exchange rate for III in JJJ on #{Date.today} is unknown."
+          "The exchange rate for III in JJJ on #{Time.zone.today} is unknown."
         )
       end
     end
