@@ -20,7 +20,7 @@ The brief for this project was as follows:
 
 Rather than writing a standalone ruby library (in the form of a gem), I chose to write the code that responds to the brief as the core logic within a Rails API. I also chose to include a React application that acts as a view on the exchange rate data store. This screenshot illustrates the interface for the client-side application.
 
-![Client Side View](client_side_view.png =x600)
+<img src="client_side_view.png" alt="Client Side View" height="600"/>
 
 **In response to the brief:**
 
@@ -57,7 +57,7 @@ The ECB feed contains rates for 33 currencies (including 'EUR'). As the time tak
 
 The primary components of the software architecture are illustrated below. This isn't an exhaustive entity diagram but does illustrate the flow of foreign exchange data through the server-side and client-side applications.
 
-![Entity Diagram](entity_diagram.png =800x)
+<img src="entity_diagram.png" alt="Entity Diagram" width="800"/>
 
 ### API
 
