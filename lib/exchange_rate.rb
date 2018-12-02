@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ExchangeRate
   class NotFound < StandardError; end
 
@@ -11,30 +13,35 @@ class ExchangeRate
 
   def self.dates
     # TODO: Refactor this not to use a lookup of 'EUR' rates as proxy for dates.
-    repository.all_eur.to_a.map{|rate| rate.date}.uniq
+    repository.all_eur.to_a.map(&:date).uniq
   end
 
   def self.currencies
-    currency_repository.all.to_a.uniq { |c| c.code }.sort_by(&:code)
+    currency_repository.all.to_a.uniq(&:code).sort_by(&:code)
   end
 
   def self.set(date, base_currency, counter_currency, value)
     exchange_rate = Rate.new(
-      date: date,
-      base_currency: base_currency,
+      date:             date,
+      base_currency:    base_currency,
       counter_currency: counter_currency,
-      value: value.to_s
+      value:            value.to_s
     )
-    existing_rate = repository.exact_match(date, base_currency, counter_currency).first
+    existing_rate = repository.exact_match(
+      date, base_currency, counter_currency
+    ).first
     return existing_rate if existing_rate.present?
-    [base_currency, counter_currency].each { |c| currency_repository.store_unique(c) }
+
+    [base_currency, counter_currency].each do |c|
+      currency_repository.store_unique(c)
+    end
     repository.save(exchange_rate)
     exchange_rate
   end
 
   def self.find_rate(date, base_currency, counter_currency)
     rate = repository.exact_match(date, base_currency, counter_currency).first
-    unless rate.present?
+    if rate.blank?
       raise NotFound, "The exchange rate for #{base_currency} in " \
         "#{counter_currency} on #{date} is unknown."
     end
@@ -51,6 +58,6 @@ class ExchangeRate
 
   def self.between(from, to, base_currency, counter_currency)
     rates = rates_between(from, to, base_currency, counter_currency)
-    rates.each_with_object({}) { |r, hash| hash[r.date] = r.value }
+    rates.each_with_object({}) {|r, hash| hash[r.date] = r.value }
   end
 end
