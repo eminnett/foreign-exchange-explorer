@@ -1,5 +1,6 @@
-class ExchangeRatesController < ApplicationController
+# frozen_string_literal: true
 
+class ExchangeRatesController < ApplicationController
   def show
     base_currency = exchange_rate_params[:base_currency]
     counter_currency = exchange_rate_params[:counter_currency]
@@ -14,15 +15,15 @@ class ExchangeRatesController < ApplicationController
       begin
         response = ExchangeRate.find_rate(on, base_currency, counter_currency)
       rescue ExchangeRate::NotFound => e
-        response = { error: e.message }
+        response = {error: e.message}
       end
     elsif from && to
-      if from > to
-        response = {
-          error: "The 'from' date must be older than the 'to' date."
-        }
-      else
-        response = ExchangeRate.rates_between(from, to, base_currency, counter_currency)
+      response = begin
+        if from > to
+          {error: "The 'from' date must be older than the 'to' date."}
+        else
+          ExchangeRate.rates_between(from, to, base_currency, counter_currency)
+        end
       end
     end
     render json: response
@@ -31,8 +32,8 @@ class ExchangeRatesController < ApplicationController
   private
 
   def exchange_rate_params
-    currencies = [:base_currency, :counter_currency]
-    dates = [:on, :from, :to]
+    currencies = %i[base_currency counter_currency]
+    dates = %i[on from to]
     permitted_params = params.permit(*(currencies + dates))
     dates.each do |param|
       permitted_params[param] = (

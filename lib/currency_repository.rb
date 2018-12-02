@@ -1,4 +1,6 @@
-require 'elasticsearch/persistence'
+# frozen_string_literal: true
+
+require "elasticsearch/persistence"
 class CurrencyRepository
   include Elasticsearch::Persistence::Repository
   include Elasticsearch::Persistence::Repository::DSL
@@ -10,13 +12,14 @@ class CurrencyRepository
     indexes :code
   end
 
-  def all(options = {})
+  def all(options={})
     return [] unless index_exists?
-    search({ from: 0, size: 100, query: { match_all: { } } }.merge(options))
+
+    search({from: 0, size: 100, query: {match_all: {}}}.merge(options))
   end
 
   def store_unique(code)
-    matches = index_exists? ? search(query: { match: { code: code }}) : nil
+    matches = index_exists? ? search(query: {match: {code: code}}) : nil
     save(Currency.new(code: code)) if !index_exists? || matches.count == 0
     # Delete duplicates caused by the NRT nature of Elasticsearch.
     if matches && matches.count > 1
