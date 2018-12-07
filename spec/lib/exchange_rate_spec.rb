@@ -9,12 +9,13 @@ RSpec.describe Rate do
     ExchangeRate.set(Date.parse("2018-11-23"), "EUR", "GBP", "0.8848")
     ExchangeRate.set(Date.parse("2018-11-26"), "EUR", "GBP", "0.8844")
     ExchangeRate.set(Date.parse("2018-11-27"), "EUR", "GBP", "0.88748")
-    sleep(1) # Let Elasticsearch catch up.
+    ExchangeRate.repository.refresh_index!
+    ExchangeRate.currency_repository.refresh_index!
   end
 
   after(:context) do
-    `bundle exec rake elasticsearch:remove_data -s`
-    sleep(1) # Let Elasticsearch catch up.
+    ExchangeRate.repository.delete_index!
+    ExchangeRate.currency_repository.delete_index!
   end
 
   describe ".dates" do
@@ -54,7 +55,7 @@ RSpec.describe Rate do
       it "should not duplicate the data in the store" do
         2.times do
           ExchangeRate.set(Time.zone.today, "CCC", "DDD", 1.2345)
-          sleep(1.second) # Let Elasticsearch catch up.
+          ExchangeRate.repository.refresh_index!
           expect(
             ExchangeRate.repository.exact_match(Time.zone.today, "CCC", "DDD").count
           ).to eq(1)
@@ -68,7 +69,7 @@ RSpec.describe Rate do
           ExchangeRate.repository.exact_match(Time.zone.today, "EEE", "FFF").count
         ).to eq(0)
         ExchangeRate.set(Time.zone.today, "EEE", "FFF", 1.2345)
-        sleep(1.second) # Let Elasticsearch catch up.
+        ExchangeRate.repository.refresh_index!
         expect(
           ExchangeRate.repository.exact_match(Time.zone.today, "EEE", "FFF").count
         ).to eq(1)
