@@ -22,11 +22,15 @@ class ExchangeRateRepository
            {sort: "date"}.merge(options))
   end
 
-  def all_eur
+  def all_dates
     return [] unless index_exists?
 
     search(
-      {from: 0, size: 10_000, query: {match: {base_currency: "EUR"}}},
+      {
+        from: 0, size: 10_000, query: {
+          match: { base_currency: all.first.base_currency }
+        }
+      },
       sort: "date"
     )
   end
