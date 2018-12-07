@@ -28,7 +28,7 @@ class ExchangeRateRepository
     search(
       {
         from: 0, size: 10_000, query: {
-          match: { base_currency: all.first.base_currency }
+          match: {base_currency: all.first.base_currency}
         }
       },
       sort: "date"
