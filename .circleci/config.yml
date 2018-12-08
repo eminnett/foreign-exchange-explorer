@@ -23,8 +23,6 @@ jobs:
             mkdir -p tmp/
             curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./tmp/cc-test-reporter
             chmod +x ./tmp/cc-test-reporter
-      - attach_workspace:
-          at: /tmp/build-workspace
       - persist_to_workspace:
           root: tmp
           paths:
@@ -34,7 +32,8 @@ jobs:
     <<: *defaults
     steps:
       - checkout
-
+      - attach_workspace:
+          at: ~/repo/tmp
       # Download and cache dependencies
       - restore_cache:
           keys:
@@ -85,6 +84,8 @@ jobs:
     <<: *defaults
     steps:
       - checkout
+      - attach_workspace:
+          at: ~/repo/tmp
       - restore_cache:
           keys:
             - v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
