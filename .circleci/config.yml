@@ -5,6 +5,8 @@
 version: 2
 jobs:
   build:
+    environment:
+      CC_TEST_REPORTER_ID: c165b1d5705ba24117217da2f3963eb2a43f3ef2c4cafee8fae37a6ca4991970
     docker:
       # specify the version you desire here
       - image: circleci/ruby:2.5.3-node
@@ -41,6 +43,13 @@ jobs:
       # - run: bundle exec rake db:create
       # - run: bundle exec rake db:schema:load
 
+      - run:
+          name: setup test coverage
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+            ./cc-test-reporter before-build
+
       # run tests!
       - run:
           name: run tests
@@ -58,6 +67,13 @@ jobs:
                             --format progress \
                             $TEST_FILES
 
+      - run:
+          name: complete test coverage
+          command: |
+            ./cc-test-reporter format-coverage -t simplecov -o coverage/codeclimate.backend.json coverage/backend/.resultset.json
+            # ./cc-test-reporter format-coverage -t lcov -o coverage/codeclimate.frontend.json coverage/frontend/lcov.info
+            ./cc-test-reporter sum-coverage coverage/codeclimate.*.json -p 2 coverage/codeclimate.json
+            ./cc-test-reporter upload-coverage
       # collect reports
       - store_test_results:
           path: /tmp/test-results
