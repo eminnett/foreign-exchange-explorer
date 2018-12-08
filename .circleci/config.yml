@@ -26,7 +26,7 @@ jobs:
       - persist_to_workspace:
           root: tmp
           paths:
-            - cc-test-reporter
+            - ./tmp/cc-test-reporter
 
   backend-tests:
     <<: *defaults
