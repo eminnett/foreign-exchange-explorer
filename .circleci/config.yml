@@ -21,11 +21,10 @@ jobs:
           name:  Download cc-test-reporter
           command: |
             mkdir -p tmp/
-            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > tmp/cc-test-reporter
-            chmod +x tmp/cc-test-reporter
-            tmp/cc-test-reporter before-build
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./tmp/cc-test-reporter
+            chmod +x ./tmp/cc-test-reporter
       - attach_workspace:
-          at: /tmp
+          at: /tmp/build-workspace
       - persist_to_workspace:
           root: tmp
           paths:
@@ -56,6 +55,7 @@ jobs:
       - run:
           name: run tests
           command: |
+            ./tmp/cc-test-reporter before-build
             mkdir /tmp/test-results
             TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
 
