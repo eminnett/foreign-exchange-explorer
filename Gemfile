@@ -63,6 +63,8 @@ group :development, :test do
   gem 'rubocop', '~> 0.60.0'
 
   gem 'rspec-rails', '~> 3.8'
+
+  gem "rspec_junit_formatter", "~> 0.4.1"
 end
 
 group :development do
