@@ -3,9 +3,6 @@
 # Check https://circleci.com/docs/2.0/language-ruby/ for more details
 #
 version: 2
-# orbs:
-#   # import Cypress orb by specifying an exact version
-#   cypress: cypress-io/cypress@1.1.0
 defaults: &defaults
   docker:
     # specify the version you desire here
@@ -112,8 +109,7 @@ jobs:
       - run:
           name: Run frontend tests
           command: |
-            # istanbul cover $(npm bin)/cypress run -- --record --key <record_key>
-            $(npm bin)/cypress run
+            istanbul cover npm test
             ./tmp/cc-test-reporter format-coverage -t lcov -o tmp/codeclimate.frontend.json coverage/frontend/lcov.info
       - persist_to_workspace:
           root: tmp
