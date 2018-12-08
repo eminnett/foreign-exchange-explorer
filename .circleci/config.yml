@@ -109,7 +109,7 @@ jobs:
       - run:
           name: Run frontend tests
           command: |
-            istanbul cover npm test
+            npm test
             ./tmp/cc-test-reporter format-coverage -t lcov -o tmp/codeclimate.frontend.json coverage/frontend/lcov.info
       - persist_to_workspace:
           root: tmp
