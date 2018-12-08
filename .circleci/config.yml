@@ -3,22 +3,33 @@
 # Check https://circleci.com/docs/2.0/language-ruby/ for more details
 #
 version: 2
+defaults: &defaults
+  docker:
+    # specify the version you desire here
+    - image: circleci/ruby:2.5.3-node
+    - image: bitnami/elasticsearch:latest
+    # Specify service dependencies here if necessary
+    # CircleCI maintains a library of pre-built images
+    # documented at https://circleci.com/docs/2.0/circleci-images/
+    # - image: circleci/postgres:9.4
+  working_directory: ~/repo
 jobs:
   build:
-    environment:
-      CC_TEST_REPORTER_ID: c165b1d5705ba24117217da2f3963eb2a43f3ef2c4cafee8fae37a6ca4991970
-    docker:
-      # specify the version you desire here
-      - image: circleci/ruby:2.5.3-node
-      - image: bitnami/elasticsearch:latest
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/postgres:9.4
+    <<: *defaults
+    steps:
+      - run:
+          name:  Download cc-test-reporter
+          command: |
+            mkdir -p tmp/
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./tmp/cc-test-reporter
+            chmod +x ./tmp/cc-test-reporter
+      - persist_to_workspace:
+          root: tmp
+          paths:
+            - cc-test-reporter
 
-
-    working_directory: ~/repo
-
+  backend-tests:
+    <<: *defaults
     steps:
       - checkout
 
@@ -39,18 +50,6 @@ jobs:
             - ./vendor/bundle
           key: v1-dependencies-{{ checksum "Gemfile.lock" }}
 
-      # Database setup
-      # - run: bundle exec rake db:create
-      # - run: bundle exec rake db:schema:load
-
-      - run:
-          name: setup test coverage
-          command: |
-            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-            chmod +x ./cc-test-reporter
-            ./cc-test-reporter before-build
-
-      # run tests!
       - run:
           name: run tests
           command: |
@@ -70,13 +69,69 @@ jobs:
       - run:
           name: complete test coverage
           command: |
-            ./cc-test-reporter format-coverage -t simplecov -o coverage/codeclimate.backend.json coverage/backend/.resultset.json
-            # ./cc-test-reporter format-coverage -t lcov -o coverage/codeclimate.frontend.json coverage/frontend/lcov.info
-            ./cc-test-reporter sum-coverage coverage/codeclimate.*.json -p 2 coverage/codeclimate.json
-            ./cc-test-reporter upload-coverage
+            ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.backend.json coverage/backend/.resultset.json
+      - persist_to_workspace:
+          root: tmp
+          paths:
+            - codeclimate.backend.json
       # collect reports
       - store_test_results:
           path: /tmp/test-results
       - store_artifacts:
           path: /tmp/test-results
           destination: test-results
+  frontend-tests:
+    <<: *defaults
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
+            - v1-deps-{{ .Branch }}
+            - v1-deps
+      - run:
+          name: Install Dependencies
+          command: |
+            npm ci
+            ./tmp/cc-test-reporter format-coverage -t lcov -o tmp/codeclimate.frontend.json coverage/frontend/lcov.info
+      - save_cache:
+          key: v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
+          paths:
+            - ~/.npm
+            - ~/.cache
+      - run:
+          name: Run frontend tests
+          command: |
+            istanbul cover $(npm bin)/cypress run -- --record --key <record_key>
+            ./tmp/cc-test-reporter format-coverage -t lcov -o tmp/codeclimate.frontend.json coverage/frontend/lcov.info
+      - persist_to_workspace:
+          root: tmp
+          paths:
+            - codeclimate.frontend.json
+
+      # - checkout
+      # - attach_workspace:
+      #     at: ~/repo/tmp
+      # - run: npm install
+      # - run:
+      #     name: Run frontend tests
+      #     command: |
+      #       npm test
+      #       ./tmp/cc-test-reporter format-coverage -t lcov -o tmp/codeclimate.frontend.json coverage/frontend/lcov.info
+      # - persist_to_workspace:
+      #     root: tmp
+      #     paths:
+      #       - codeclimate.frontend.json
+
+  upload-coverage:
+    <<: *defaults
+    environment:
+      CC_TEST_REPORTER_ID: c165b1d5705ba24117217da2f3963eb2a43f3ef2c4cafee8fae37a6ca4991970
+    steps:
+      - attach_workspace:
+          at: ~/repo/tmp
+      - run:
+          name: Upload coverage results to Code Climate
+          command: |
+            ./tmp/cc-test-reporter sum-coverage tmp/codeclimate.*.json -p 2 -o tmp/codeclimate.total.json
+            ./tmp/cc-test-reporter upload-coverage -i tmp/codeclimate.total.json
