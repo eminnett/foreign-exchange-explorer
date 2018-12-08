@@ -21,8 +21,8 @@ jobs:
           name:  Download cc-test-reporter
           command: |
             mkdir -p tmp/
-            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./tmp/cc-test-reporter
-            chmod +x ./tmp/cc-test-reporter
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > tmp/cc-test-reporter
+            chmod +x tmp/cc-test-reporter
       - persist_to_workspace:
           root: tmp
           paths:
@@ -51,10 +51,6 @@ jobs:
           key: v1-dependencies-{{ checksum "Gemfile.lock" }}
 
       - run:
-          name: setup test coverage
-          command: ./tmp/cc-test-reporter before-build
-
-      - run:
           name: run tests
           command: |
             mkdir /tmp/test-results
@@ -70,10 +66,8 @@ jobs:
                             --format progress \
                             $TEST_FILES
 
-      - run:
-          name: complete test coverage
-          command: |
-            /tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.backend.json coverage/backend/.resultset.json
+            ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.backend.json coverage/backend/.resultset.json
+
       - persist_to_workspace:
           root: tmp
           paths:
