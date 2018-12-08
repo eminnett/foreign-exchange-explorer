@@ -26,7 +26,7 @@ jobs:
       - persist_to_workspace:
           root: tmp
           paths:
-            - ./tmp/cc-test-reporter
+            - cc-test-reporter
 
   backend-tests:
     <<: *defaults
@@ -51,6 +51,10 @@ jobs:
           key: v1-dependencies-{{ checksum "Gemfile.lock" }}
 
       - run:
+          name: setup test coverage
+          command: ./tmp/cc-test-reporter before-build
+
+      - run:
           name: run tests
           command: |
             mkdir /tmp/test-results
@@ -69,7 +73,7 @@ jobs:
       - run:
           name: complete test coverage
           command: |
-            ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.backend.json coverage/backend/.resultset.json
+            /tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.backend.json coverage/backend/.resultset.json
       - persist_to_workspace:
           root: tmp
           paths:
@@ -93,12 +97,16 @@ jobs:
           name: Install Dependencies
           command: |
             npm ci
-            ./tmp/cc-test-reporter format-coverage -t lcov -o tmp/codeclimate.frontend.json coverage/frontend/lcov.info
       - save_cache:
           key: v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
           paths:
             - ~/.npm
             - ~/.cache
+
+      - run:
+          name: setup test coverage
+          command: ./tmp/cc-test-reporter before-build
+
       - run:
           name: Run frontend tests
           command: |
