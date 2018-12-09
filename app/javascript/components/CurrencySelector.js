@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 class CurrencySelector extends React.Component {
@@ -30,6 +31,16 @@ class CurrencySelector extends React.Component {
     );
   }
 }
+
+CurrencySelector.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  action: PropTypes.func.isRequired,
+  selection: PropTypes.string,
+  selectionMade: PropTypes.bool.isRequired,
+  placeholder: PropTypes.string.isRequired,
+  currencies: PropTypes.object.isRequired,
+  disabledOption: PropTypes.string,
+};
 
 function mapStateToProps(state, ownProps) {
   return {

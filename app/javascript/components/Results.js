@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 class Results extends React.Component {
@@ -75,6 +76,20 @@ class Results extends React.Component {
     );
   }
 }
+
+Results.propTypes = {
+  amount: PropTypes.string.isRequired,
+  exchangeRate: PropTypes.string.isRequired,
+  baseCurrency: PropTypes.shape({
+    symbol: PropTypes.string.isRequired,
+    code: PropTypes.string.isRequired,
+  }),
+  counterCurrency: PropTypes.shape({
+    symbol: PropTypes.string.isRequired,
+    code: PropTypes.string.isRequired,
+  }),
+  date: PropTypes.string.isRequired,
+};
 
 function mapStateToProps(state) {
   let date = state.selectedDate;

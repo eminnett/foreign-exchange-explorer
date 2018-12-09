@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import DayPicker from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
@@ -50,6 +51,12 @@ class DateSelector extends React.Component {
     );
   }
 }
+
+DateSelector.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  dates: PropTypes.object.isRequired,
+  selectedDate: PropTypes.instanceOf(Date).isRequired,
+};
 
 function mapStateToProps(state) {
   const selectedDate = state.selectedDate

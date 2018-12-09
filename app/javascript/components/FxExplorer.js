@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import DateSelector from './DateSelector';
 import Amount from './Amount';
@@ -64,11 +65,24 @@ class FxExplorer extends React.Component {
   }
 }
 
+FxExplorer.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  selectedDate: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.instanceOf(Date),
+  ]),
+  baseCurrency: PropTypes.string.isRequired,
+  counterCurrency: PropTypes.string.isRequired,
+  enableSubmission: PropTypes.bool.isRequired,
+  showResults: PropTypes.bool.isRequired,
+  showGraph: PropTypes.bool.isRequired,
+};
+
 function mapStateToProps(state) {
-  const baseCurrencySet = state.baseCurrency;
-  const counterCurrencySet = state.counterCurrency;
+  const baseCurrencySet = state.baseCurrency !== '';
+  const counterCurrencySet = state.counterCurrency !== '';
   const enableSubmission =
-    state.amount > 0 && baseCurrencySet && counterCurrencySet;
+    parseInt(state.amount) > 0 && baseCurrencySet && counterCurrencySet;
   const currenciesChanged =
     state.baseCurrency !== state.exchangeRate.base_currency ||
     state.counterCurrency !== state.exchangeRate.counter_currency;

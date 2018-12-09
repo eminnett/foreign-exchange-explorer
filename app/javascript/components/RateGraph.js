@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { formatDate } from '../utils/exchange_rates_api';
 import { Line as LineChart } from 'react-chartjs-2';
@@ -6,7 +7,7 @@ import { Line as LineChart } from 'react-chartjs-2';
 
 class RateGraph extends React.Component {
   render() {
-    return <LineChart data={this.props.data} options={this.props.options} />;
+    return <LineChart data={this.props.data} />;
   }
 }
 
@@ -48,7 +49,6 @@ function mapStateToProps(state) {
   const label = `${baseMoney} in ${exchangedCurrency}`;
 
   return {
-    selectedDate: state.selectedDate,
     data: {
       datasets: [
         {
@@ -64,8 +64,11 @@ function mapStateToProps(state) {
       ],
       labels,
     },
-    options: {},
   };
 }
+
+RateGraph.propTypes = {
+  data: PropTypes.object.isRequired,
+};
 
 export default connect(mapStateToProps)(RateGraph);

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { setAmount } from '../actions/amount';
 
@@ -23,6 +24,11 @@ class Amount extends React.Component {
     );
   }
 }
+
+Amount.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  amount: PropTypes.string.isRequired,
+};
 
 function mapStateToProps(state) {
   return {

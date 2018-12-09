@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { populateData } from '../actions/shared';
 import LoadingBar from 'react-redux-loading';
@@ -21,6 +22,11 @@ class ExplorerApp extends Component {
     );
   }
 }
+
+ExplorerApp.propTypes = {
+  loading: PropTypes.bool.isRequired,
+  dispatch: PropTypes.func.isRequired,
+};
 
 function mapStateToProps(state) {
   const noDates = Object.keys(state.dates).length === 0;
