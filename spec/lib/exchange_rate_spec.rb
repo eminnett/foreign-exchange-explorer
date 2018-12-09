@@ -15,7 +15,9 @@ RSpec.describe Rate do
 
   after(:context) do
     ExchangeRate.repository.delete_index!
+    ExchangeRate.repository.create_index!
     ExchangeRate.currency_repository.delete_index!
+    ExchangeRate.currency_repository.create_index!
   end
 
   describe ".dates" do

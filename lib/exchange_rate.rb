@@ -4,11 +4,19 @@ class ExchangeRate
   class NotFound < StandardError; end
 
   def self.repository
-    @repository ||= ExchangeRateRepository.new
+    @repository ||= begin
+      repo = ExchangeRateRepository.new
+      repo.create_index! unless repo.index_exists?
+      repo
+    end
   end
 
   def self.currency_repository
-    @currency_repository ||= CurrencyRepository.new
+    @currency_repository ||= begin
+      repo = CurrencyRepository.new
+      repo.create_index! unless repo.index_exists?
+      repo
+    end
   end
 
   def self.dates

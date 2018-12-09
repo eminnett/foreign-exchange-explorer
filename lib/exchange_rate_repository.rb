@@ -10,21 +10,17 @@ class ExchangeRateRepository
 
   mapping do
     indexes :id
-    indexes :base_currency
-    indexes :counter_currency
-    indexes :date
+    indexes :base_currency,    type: "keyword"
+    indexes :counter_currency, type: "keyword"
+    indexes :date,             type: "date"
   end
 
   def all(options={})
-    return [] unless index_exists?
-
     search({from: 0, size: 10_000, query: {match_all: {}}},
            {sort: "date"}.merge(options))
   end
 
   def all_dates
-    return [] unless index_exists?
-
     search(
       {
         from: 0, size: 10_000, query: {
@@ -36,8 +32,6 @@ class ExchangeRateRepository
   end
 
   def exact_match(date, base_currency, counter_currency)
-    return [] unless index_exists?
-
     search(query: {
              bool: {
                must: [
@@ -50,8 +44,6 @@ class ExchangeRateRepository
   end
 
   def between_dates(from, to, base_currency, counter_currency)
-    return [] unless index_exists?
-
     search({from: 0, size: 10_000, query: {
              bool: {
                must: [
