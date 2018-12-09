@@ -1,24 +1,22 @@
-import React from "react";
+import React from 'react';
 import { connect } from 'react-redux';
 import { setAmount } from '../actions/amount';
 
 class Amount extends React.Component {
-  handleChange = (event) => {
+  handleChange = event => {
     this.props.dispatch(setAmount(event.target.value));
   };
 
-  render () {
+  render() {
     return (
-      <div className='amount-input'>
-        <div className='label'>
-          Amount to Convert:
-        </div>
+      <div className="amount-input">
+        <div className="label">Amount to Convert:</div>
         <input
           value={this.props.amount}
-          type='number'
-          min='0.01'
-          step='0.01'
-          placeholder='How much to convert?'
+          type="number"
+          min="0.01"
+          step="0.01"
+          placeholder="How much to convert?"
           onChange={this.handleChange.bind(this)}
         />
       </div>
@@ -26,9 +24,9 @@ class Amount extends React.Component {
   }
 }
 
-function mapStateToProps (state) {
+function mapStateToProps(state) {
   return {
-    amount: state.amount > 0 ? state.amount : ''
+    amount: state.amount > 0 ? state.amount : '',
   };
 }
 

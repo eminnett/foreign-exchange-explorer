@@ -5,4 +5,4 @@ export function setAmount(amount) {
     type: SET_AMOUNT,
     amount,
   };
-};
+}

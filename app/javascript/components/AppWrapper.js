@@ -10,7 +10,7 @@ import { Provider } from 'react-redux';
 import reducer from '../reducers';
 import middleware from '../middleware';
 
-const persistConfig = { key: 'root', storage }
+const persistConfig = { key: 'root', storage };
 const persistedReducer = persistReducer(persistConfig, reducer);
 const store = createStore(persistedReducer, middleware);
 const persistor = persistStore(store);
@@ -23,8 +23,8 @@ class AppWrapper extends React.Component {
           <ExplorerApp />
         </PersistGate>
       </Provider>
-    )
-  };
-};
+    );
+  }
+}
 
 export default AppWrapper;

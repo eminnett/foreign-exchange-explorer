@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import { connect } from 'react-redux';
 import DayPicker from 'react-day-picker';
 import 'react-day-picker/lib/style.css';
@@ -14,22 +14,23 @@ class DateSelector extends React.Component {
     this.props.dispatch(changeDate(selection));
   };
 
-  render () {
+  render() {
     const dates = this.props.dates;
     const firstDay = new Date(dates[0]);
     const lastDay = new Date(dates[Object.keys(dates).reverse()[0]]);
     const firstMonth = new Date(firstDay.getFullYear(), firstDay.getMonth());
     const lastMonth = new Date(lastDay.getFullYear(), lastDay.getMonth());
     const selection = this.props.selectedDate;
-    const disabledDays = [firstMonth,
-      { after: firstMonth , before: firstDay },
+    const disabledDays = [
+      firstMonth,
+      { after: firstMonth, before: firstDay },
       {
         after: lastDay,
-        before: new Date(lastDay.getFullYear(), lastDay.getMonth()+1, 1)
-      }
+        before: new Date(lastDay.getFullYear(), lastDay.getMonth() + 1, 1),
+      },
     ];
     let dt = new Date(firstDay);
-    while(dt < lastDay) {
+    while (dt < lastDay) {
       let dtString = formatDate(dt);
       if (!Object.values(dates).includes(dtString)) {
         disabledDays.push(new Date(dt));
@@ -50,12 +51,13 @@ class DateSelector extends React.Component {
   }
 }
 
-function mapStateToProps (state) {
-  const selectedDate = state.selectedDate ?
-    (typeof state.selectedDate === 'string' ?
-      new Date(state.selectedDate) : state.selectedDate) :
-    undefined;
-  return {dates: state.dates, selectedDate};
+function mapStateToProps(state) {
+  const selectedDate = state.selectedDate
+    ? typeof state.selectedDate === 'string'
+      ? new Date(state.selectedDate)
+      : state.selectedDate
+    : undefined;
+  return { dates: state.dates, selectedDate };
 }
 
 export default connect(mapStateToProps)(DateSelector);

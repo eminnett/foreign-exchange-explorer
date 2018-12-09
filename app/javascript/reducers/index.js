@@ -18,5 +18,5 @@ export default combineReducers({
   exchangeRate,
   graphData,
   selectedDate,
-  loadingBar: loadingBarReducer
+  loadingBar: loadingBarReducer,
 });

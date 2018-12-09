@@ -5,4 +5,4 @@ export function setEchangeRate(exchangeRate) {
     type: SET_EXCHANGE_RATE,
     exchangeRate,
   };
-};
+}
