@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { formatDate } from '../utils/exchange_rates_api';
 import { Line as LineChart } from 'react-chartjs-2';
-import Chart from 'chart.js';
+// import Chart from 'chart.js';
 
 class RateGraph extends React.Component {
   render() {
@@ -11,9 +11,6 @@ class RateGraph extends React.Component {
 }
 
 function mapStateToProps(state) {
-  const currencySymbol = Object.values(state.currencies).filter(
-    c => c.code === state.counterCurrency,
-  )[0].symbol;
   let data = [];
   let labels = [];
   let pointRadii = [];
@@ -34,9 +31,6 @@ function mapStateToProps(state) {
       pointBorderWidths.push(1);
     }
   });
-
-  const min = Math.min(Object.values(data)) * 0.9;
-  const max = Math.max(Object.values(data)) * 1.1;
 
   const baseCurrency = Object.values(state.currencies).filter(
     c => c.code === state.baseCurrency,

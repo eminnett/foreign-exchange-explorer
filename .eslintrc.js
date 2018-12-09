@@ -1,9 +1,14 @@
 module.exports = {
   parser: 'babel-eslint',
-  extends: ['eslint:recommended', 'prettier'], // extending recommended config and config derived from eslint-config-prettier
-  plugins: ['prettier'], // activating esling-plugin-prettier (--fix stuff)
+  extends: ['eslint:recommended', 'prettier', 'plugin:react/recommended'],
+  plugins: ['prettier', 'react'],
+  env: {
+    es6: true,
+    browser: true,
+    jest: true,
+  },
   rules: {
-    'prettier/prettier': [ // customizing prettier rules (unfortunately not many of them are customizable)
+    'prettier/prettier': [
       'error',
       {
         singleQuote: true,
@@ -11,5 +16,16 @@ module.exports = {
       },
     ],
     eqeqeq: ['error', 'always'], // adding some custom ESLint rules
+    'no-unused-vars': ["error", { "args": "none" }]
   },
+  parserOptions: {
+    ecmaFeatures: {
+      jsx: true
+    }
+  },
+  settings: {
+    react: {
+      version: "16.6.3"
+    },
+  }
 };

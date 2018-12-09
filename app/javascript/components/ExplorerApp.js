@@ -4,7 +4,7 @@ import { populateData } from '../actions/shared';
 import LoadingBar from 'react-redux-loading';
 import FxExplorer from './FxExplorer';
 
-class ExplorerApp extends React.Component {
+class ExplorerApp extends Component {
   componentDidMount() {
     if (this.props.loading) {
       this.props.dispatch(populateData());

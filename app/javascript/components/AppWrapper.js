@@ -1,6 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-// import './index.css';
 import ExplorerApp from './ExplorerApp';
 import { createStore } from 'redux';
 import { persistStore, persistReducer } from 'redux-persist';

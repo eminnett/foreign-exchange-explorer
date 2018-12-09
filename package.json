@@ -2,8 +2,8 @@
   "name": "foreign-exchange-explorer",
   "private": true,
   "scripts": {
-    "fix-linting": "eslint --fix --ignore-path .gitignore .",
-    "pretest": "eslint --ignore-path .gitignore .",
+    "fix-linting": "eslint --fix .",
+    "pretest": "eslint .",
     "test": "jest --coverage"
   },
   "jest": {
