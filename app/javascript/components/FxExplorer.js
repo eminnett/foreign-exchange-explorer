@@ -27,26 +27,39 @@ class FxExplorer extends React.Component {
   };
 
   render() {
+    const currencySelectorProperties = [
+      {
+        id: 0,
+        label: 'Convert from this currency:',
+        action: setBaseCurrency,
+        selection: this.props.baseCurrency,
+        disabledOption: this.props.counterCurrency,
+      },
+      {
+        id: 1,
+        label: 'To this currency:',
+        action: setCounterCurrency,
+        selection: this.props.counterCurrency,
+        disabledOption: this.props.baseCurrency,
+      },
+    ];
+
     return (
       <section>
         <div className="form-wrapper">
           <DateSelector />
           <div className="inputs-wrapper">
             <Amount />
-            <div className="label">Convert from this currency:</div>
-            <CurrencySelector
-              action={setBaseCurrency}
-              selection={this.props.baseCurrency}
-              disabledOption={this.props.counterCurrency}
-              placeholder={'Please select currency'}
-            />
-            <div className="label">To this currency:</div>
-            <CurrencySelector
-              action={setCounterCurrency}
-              selection={this.props.counterCurrency}
-              disabledOption={this.props.baseCurrency}
-              placeholder={'Please select currency'}
-            />
+            {currencySelectorProperties.map(properties => (
+              <div key={properties.id}>
+                <div className="label">{properties.label}</div>
+                <CurrencySelector
+                  action={properties.action}
+                  selection={properties.selection}
+                  disabledOption={properties.disabledOption}
+                />
+              </div>
+            ))}
             <button
               type="button"
               onClick={this.handleSubmission.bind(this)}

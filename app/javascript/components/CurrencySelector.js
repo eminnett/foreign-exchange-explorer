@@ -15,7 +15,7 @@ class CurrencySelector extends React.Component {
           onBlur={this.handleChange.bind(this)}
         >
           <option value="" disabled={this.props.selectionMade}>
-            {this.props.placeholder}
+            {this.props.placeholder || 'Please select currency'}
           </option>
           {Object.values(this.props.currencies).map(currency => (
             <option
@@ -37,7 +37,7 @@ CurrencySelector.propTypes = {
   action: PropTypes.func.isRequired,
   selection: PropTypes.string,
   selectionMade: PropTypes.bool.isRequired,
-  placeholder: PropTypes.string.isRequired,
+  placeholder: PropTypes.string,
   currencies: PropTypes.object.isRequired,
   disabledOption: PropTypes.string,
 };
