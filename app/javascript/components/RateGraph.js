@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { findCurrencyByCode } from '../utils/helpful_functions';
 import { formatDate } from '../utils/exchange_rates_api';
 import { Line as LineChart } from 'react-chartjs-2';
-// import Chart from 'chart.js';
 
 class RateGraph extends React.Component {
   render() {
@@ -12,7 +11,7 @@ class RateGraph extends React.Component {
   }
 }
 
-function mapStateToProps(state) {
+function parseGraphData(state) {
   let data = [];
   let labels = [];
   let pointRadii = [];
@@ -33,21 +32,17 @@ function mapStateToProps(state) {
       pointBorderWidths.push(1);
     }
   });
+  return [data, labels, pointRadii, pointColours, pointBorderWidths];
+}
 
-  const baseCurrency = findCurrencyByCode(state.currencies, state.baseCurrency);
-  const counterCurrency = findCurrencyByCode(
-    state.currencies,
-    state.counterCurrency,
-  );
-
-  const baseMoney = `${baseCurrency.symbol}${state.amount} (${
-    baseCurrency.code
-  })`;
-  const exchangedCurrency = `${counterCurrency.symbol} (${
-    counterCurrency.code
-  })`;
-  const label = `${baseMoney} in ${exchangedCurrency}`;
-
+function graphProperties(label, state) {
+  const [
+    data,
+    labels,
+    pointRadii,
+    pointColours,
+    pointBorderWidths,
+  ] = parseGraphData(state);
   return {
     data: {
       datasets: [
@@ -65,6 +60,23 @@ function mapStateToProps(state) {
       labels,
     },
   };
+}
+
+function mapStateToProps(state) {
+  const baseCurrency = findCurrencyByCode(state.currencies, state.baseCurrency);
+  const counterCurrency = findCurrencyByCode(
+    state.currencies,
+    state.counterCurrency,
+  );
+  const baseMoney = `${baseCurrency.symbol}${state.amount} (${
+    baseCurrency.code
+  })`;
+  const exchangedCurrency = `${counterCurrency.symbol} (${
+    counterCurrency.code
+  })`;
+  const label = `${baseMoney} in ${exchangedCurrency}`;
+
+  return graphProperties(label, state);
 }
 
 RateGraph.propTypes = {
