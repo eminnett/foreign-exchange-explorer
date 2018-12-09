@@ -3,32 +3,34 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { findCurrencyByCode } from '../utils/helpful_functions';
 
+const dayLabels = [
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+];
+
+const monthLabels = [
+  'Januray',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
+
 class Results extends React.Component {
   readableDate(date) {
     const d = typeof date === 'string' ? new Date(date) : date;
-    const dayLabels = [
-      'Sunday',
-      'Monday',
-      'Tuesday',
-      'Wednesday',
-      'Thursday',
-      'Friday',
-      'Saturday',
-    ];
-    const monthLabels = [
-      'Januray',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
-    ];
     const weekDay = dayLabels[d.getDay()];
     const day = this.ordinalNumber(d.getDate());
     const month = monthLabels[d.getMonth()];
