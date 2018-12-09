@@ -5,4 +5,4 @@ export function setGraphData(graphData) {
     type: SET_GRAPH_DATA,
     graphData,
   };
-};
+}

@@ -6,11 +6,11 @@ export function selectDate(date) {
     type: SELECT_DATE,
     date,
   };
-};
+}
 
 export function setDefaultDate(date) {
   return {
     type: SET_DEFAULT_DATE,
     date,
   };
-};
+}

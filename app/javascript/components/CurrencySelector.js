@@ -1,24 +1,23 @@
-import React from "react";
+import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 class CurrencySelector extends React.Component {
-
-  handleChange = (event) => {
+  handleChange = event => {
     this.props.dispatch(this.props.action(event.target.value));
   };
 
-  render () {
+  render() {
     return (
-      <div className='select-wrapper'>
+      <div className="select-wrapper">
         <select
-          value={this.props.selection}
-          onChange={this.handleChange.bind(this)}
+          defaultValue={this.props.selection}
+          onBlur={this.handleChange.bind(this)}
         >
-          <option
-            value=''
-            disabled={this.props.selectionMade}
-          >{this.props.placeholder}</option>
-          { Object.values(this.props.currencies).map((currency) => (
+          <option value="" disabled={this.props.selectionMade}>
+            {this.props.placeholder || 'Please select currency'}
+          </option>
+          {Object.values(this.props.currencies).map(currency => (
             <option
               key={currency.id}
               value={currency.code}
@@ -33,10 +32,20 @@ class CurrencySelector extends React.Component {
   }
 }
 
+CurrencySelector.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  action: PropTypes.func.isRequired,
+  selection: PropTypes.string,
+  selectionMade: PropTypes.bool.isRequired,
+  placeholder: PropTypes.string,
+  currencies: PropTypes.object.isRequired,
+  disabledOption: PropTypes.string,
+};
+
 function mapStateToProps(state, ownProps) {
   return {
     selectionMade: ownProps.selection !== '',
-    currencies: state.currencies
+    currencies: state.currencies,
   };
 }
 

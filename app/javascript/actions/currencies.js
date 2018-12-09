@@ -5,4 +5,4 @@ export function receiveCurrencies(currencies) {
     type: RECEIVE_CURRENCIES,
     currencies,
   };
-};
+}

@@ -8,12 +8,13 @@ RSpec.describe ExchangeRatesController, type: :controller do
     ExchangeRate.set(Date.parse("2018-11-23"), "EUR", "GBP", "0.8848")
     ExchangeRate.set(Date.parse("2018-11-26"), "EUR", "GBP", "0.8844")
     ExchangeRate.set(Date.parse("2018-11-27"), "EUR", "GBP", "0.88748")
-    sleep(1.second) # Let Elasticsearch catch up.
+    ExchangeRate.repository.refresh_index!
+    ExchangeRate.currency_repository.refresh_index!
   end
 
   after(:context) do
-    `bundle exec rake elasticsearch:remove_data -s`
-    sleep(1.second) # Let Elasticsearch catch up.
+    ExchangeRate.repository.delete_index!
+    ExchangeRate.currency_repository.delete_index!
   end
 
   describe "GET #show" do

@@ -5,4 +5,4 @@ export function setCounterCurrency(counterCurrency) {
     type: SET_COUNTER_CURRENCY,
     counterCurrency,
   };
-};
+}

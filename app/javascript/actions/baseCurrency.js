@@ -5,4 +5,4 @@ export function setBaseCurrency(baseCurrency) {
     type: SET_BASE_CURRENCY,
     baseCurrency,
   };
-};
+}

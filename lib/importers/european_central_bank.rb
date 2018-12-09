@@ -59,7 +59,7 @@ module Importers
     def set_rate(date, base_currency, counter_currency, value)
       ExchangeRate.set(date, base_currency, counter_currency, value)
       @rates_counter += 1
-      log "." unless @silent
+      log_increment "."
     end
 
     def process_day_of_data(data_for_day)
@@ -119,8 +119,12 @@ module Importers
       end
     end
 
+    def log_increment(message)
+      Rails.logger << message unless @silent
+    end
+
     def log(message)
-      logger.info(message) unless @silent
+      Rails.logger.info(message) unless @silent
     end
   end
 end

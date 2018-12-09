@@ -1,5 +1,9 @@
 # Foreign Exchange Explorer
 
+[![CircleCI](https://circleci.com/gh/eminnett/foreign-exchange-explorer.svg?style=svg)](https://circleci.com/gh/eminnett/foreign-exchange-explorer)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/816153965c3591b987b5/test_coverage)](https://codeclimate.com/github/eminnett/foreign-exchange-explorer/test_coverage)
+[![Maintainability](https://api.codeclimate.com/v1/badges/816153965c3591b987b5/maintainability)](https://codeclimate.com/github/eminnett/foreign-exchange-explorer/maintainability)
+
 ## Description
 
 The purpose of this project is to fulfil the following two objectives:

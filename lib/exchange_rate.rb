@@ -12,8 +12,7 @@ class ExchangeRate
   end
 
   def self.dates
-    # TODO: Refactor this not to use a lookup of 'EUR' rates as proxy for dates.
-    repository.all_eur.to_a.map(&:date).uniq
+    repository.all_dates.to_a.map(&:date).uniq
   end
 
   def self.currencies

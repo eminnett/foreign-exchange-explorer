@@ -1,0 +1,162 @@
+# Ruby CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-ruby/ for more details
+#
+version: 2
+defaults: &defaults
+  docker:
+    # specify the version you desire here
+    - image: circleci/ruby:2.5.3-node
+    - image: bitnami/elasticsearch:latest
+    # Specify service dependencies here if necessary
+    # CircleCI maintains a library of pre-built images
+    # documented at https://circleci.com/docs/2.0/circleci-images/
+    # - image: circleci/postgres:9.4
+  working_directory: ~/repo
+jobs:
+  build:
+    <<: *defaults
+    steps:
+      - run:
+          name:  Download cc-test-reporter
+          command: |
+            mkdir -p tmp/
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./tmp/cc-test-reporter
+            chmod +x ./tmp/cc-test-reporter
+      - persist_to_workspace:
+          root: tmp
+          paths:
+            - cc-test-reporter
+
+  backend-tests:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/repo/tmp
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "Gemfile.lock" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
+      - run:
+          name: install dependencies
+          command: |
+            bundle install --jobs=4 --retry=3 --path vendor/bundle
+
+      - save_cache:
+          paths:
+            - ./vendor/bundle
+          key: v1-dependencies-{{ checksum "Gemfile.lock" }}
+
+      - run:
+          name: run tests
+          command: |
+            ./tmp/cc-test-reporter before-build
+            mkdir /tmp/test-results
+            TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
+
+            bundle exec rake bundler:audit
+
+            bundle exec rubocop
+
+            bundle exec rspec --format progress \
+                            --format RspecJunitFormatter \
+                            --out /tmp/test-results/rspec.xml \
+                            --format progress \
+                            $TEST_FILES
+
+            ./tmp/cc-test-reporter format-coverage -t simplecov -o tmp/codeclimate.backend.json coverage/backend/.resultset.json
+
+      - persist_to_workspace:
+          root: tmp
+          paths:
+            - codeclimate.backend.json
+      # collect reports
+      - store_test_results:
+          path: /tmp/test-results
+      - store_artifacts:
+          path: /tmp/test-results
+          destination: test-results
+
+  frontend-tests:
+    <<: *defaults
+    steps:
+      - checkout
+      - attach_workspace:
+          at: ~/repo/tmp
+      - restore_cache:
+          keys:
+            - v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
+            - v1-deps-{{ .Branch }}
+            - v1-deps
+      - run:
+          name: Install Dependencies
+          command: |
+            npm ci
+      - save_cache:
+          key: v1-deps-{{ .Branch }}-{{ checksum "package.json" }}
+          paths:
+            - ~/.npm
+            - ~/.cache
+
+      - run:
+          name: setup test coverage
+          command: ./tmp/cc-test-reporter before-build
+
+      - run:
+          name: Run frontend tests
+          command: |
+            npm run pretest
+            npm test
+            ./tmp/cc-test-reporter format-coverage -t lcov -o tmp/codeclimate.frontend.json coverage/frontend/lcov.info
+      - persist_to_workspace:
+          root: tmp
+          paths:
+            - codeclimate.frontend.json
+
+      # - checkout
+      # - attach_workspace:
+      #     at: ~/repo/tmp
+      # - run: npm install
+      # - run:
+      #     name: Run frontend tests
+      #     command: |
+      #       npm test
+      #       ./tmp/cc-test-reporter format-coverage -t lcov -o tmp/codeclimate.frontend.json coverage/frontend/lcov.info
+      # - persist_to_workspace:
+      #     root: tmp
+      #     paths:
+      #       - codeclimate.frontend.json
+
+  upload-coverage:
+    <<: *defaults
+    environment:
+      CC_TEST_REPORTER_ID: c165b1d5705ba24117217da2f3963eb2a43f3ef2c4cafee8fae37a6ca4991970
+    steps:
+      - attach_workspace:
+          at: ~/repo/tmp
+      - run:
+          name: Upload coverage results to Code Climate
+          command: |
+            ./tmp/cc-test-reporter sum-coverage tmp/codeclimate.*.json -p 2 -o tmp/codeclimate.total.json
+            ./tmp/cc-test-reporter upload-coverage -i tmp/codeclimate.total.json
+
+workflows:
+  version: 2
+
+  commit:
+    jobs:
+      - build
+      - backend-tests:
+          requires:
+            - build
+      - frontend-tests:
+          requires:
+             - build
+      - upload-coverage:
+          requires:
+             - backend-tests
+             - frontend-tests
