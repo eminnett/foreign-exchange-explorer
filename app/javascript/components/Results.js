@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { findCurrencyByCode } from '../utils/helpful_functions';
 
 class Results extends React.Component {
   readableDate(date) {
@@ -98,12 +99,11 @@ function mapStateToProps(state) {
     date: date.toDateString(),
     amount: state.amount,
     exchangeRate: state.exchangeRate.value,
-    baseCurrency: Object.values(state.currencies).filter(
-      c => c.code === state.baseCurrency,
-    )[0],
-    counterCurrency: Object.values(state.currencies).filter(
-      c => c.code === state.counterCurrency,
-    )[0],
+    baseCurrency: findCurrencyByCode(state.currencies, state.baseCurrency),
+    counterCurrency: findCurrencyByCode(
+      state.currencies,
+      state.counterCurrency,
+    ),
   };
 }
 

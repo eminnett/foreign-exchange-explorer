@@ -99,18 +99,15 @@ function mapStateToProps(state) {
   const currenciesChanged =
     state.baseCurrency !== state.exchangeRate.base_currency ||
     state.counterCurrency !== state.exchangeRate.counter_currency;
+  const propertySet = property => {
+    return typeof property !== 'undefined' && Object.keys(property).length > 0;
+  };
   return {
     baseCurrency: baseCurrencySet ? state.baseCurrency : '',
     counterCurrency: counterCurrencySet ? state.counterCurrency : '',
     enableSubmission,
-    showResults:
-      typeof state.exchangeRate !== 'undefined' &&
-      Object.keys(state.graphData).length > 0 &&
-      !currenciesChanged,
-    showGraph:
-      typeof state.graphData !== 'undefined' &&
-      Object.keys(state.graphData).length > 0 &&
-      !currenciesChanged,
+    showResults: propertySet(state.exchangeRate) && !currenciesChanged,
+    showGraph: propertySet(state.graphData) && !currenciesChanged,
     selectedDate: state.selectedDate,
   };
 }

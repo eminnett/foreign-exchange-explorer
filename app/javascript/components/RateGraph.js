@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { findCurrencyByCode } from '../utils/helpful_functions';
 import { formatDate } from '../utils/exchange_rates_api';
 import { Line as LineChart } from 'react-chartjs-2';
 // import Chart from 'chart.js';
@@ -33,12 +34,11 @@ function mapStateToProps(state) {
     }
   });
 
-  const baseCurrency = Object.values(state.currencies).filter(
-    c => c.code === state.baseCurrency,
-  )[0];
-  const counterCurrency = Object.values(state.currencies).filter(
-    c => c.code === state.counterCurrency,
-  )[0];
+  const baseCurrency = findCurrencyByCode(state.currencies, state.baseCurrency);
+  const counterCurrency = findCurrencyByCode(
+    state.currencies,
+    state.counterCurrency,
+  );
 
   const baseMoney = `${baseCurrency.symbol}${state.amount} (${
     baseCurrency.code
