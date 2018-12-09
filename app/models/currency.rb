@@ -17,12 +17,9 @@ class Currency
     end
   end
 
-  def initialize(attr={})
-    code = attr[:code] || attr["code"]
-    mapping = self.class.mapping
-    attr[:symbol] ||= mapping[code]["symbol"] if mapping.key?(code)
-    attr[:id] ||= SecureRandom.uuid
-    attr.each do |k, v|
+  def initialize(attrs={})
+    attrs = include_default_attributes(attrs)
+    attrs.each do |k, v|
       send("#{k}=", v) if ATTRIBUTES.include?(k.to_sym)
     end
   end
@@ -37,5 +34,15 @@ class Currency
 
   def to_s
     code
+  end
+
+  private
+
+  def include_default_attributes(attrs)
+    code = attrs[:code] || attrs["code"]
+    mapping = self.class.mapping
+    attrs[:symbol] ||= mapping[code]["symbol"] if mapping.key?(code)
+    attrs[:id] ||= SecureRandom.uuid
+    attrs
   end
 end
