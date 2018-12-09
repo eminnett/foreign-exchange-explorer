@@ -13,7 +13,9 @@ RSpec.describe DatesController, type: :controller do
 
   after(:context) do
     ExchangeRate.repository.delete_index!
+    ExchangeRate.repository.create_index!
     ExchangeRate.currency_repository.delete_index!
+    ExchangeRate.currency_repository.create_index!
   end
 
   describe "GET #show" do

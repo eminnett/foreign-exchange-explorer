@@ -13,21 +13,21 @@ class CurrencyRepository
   end
 
   def all(options={})
-    return [] unless index_exists?
-
     search({from: 0, size: 100, query: {match_all: {}}}.merge(options))
   end
 
   def store_unique(code)
-    matches = index_exists? ? search(query: {match: {code: code}}) : nil
-    save(Currency.new(code: code)) if !index_exists? || matches.count.zero?
+    matches = search(query: {match: {code: code}})
+    save(Currency.new(code: code)) if matches.count.zero?
     # Delete duplicates caused by the NRT nature of Elasticsearch.
-    remove_duplicates(matches) if matches && matches.count > 1
+    remove_duplicates(matches)
   end
 
   private
 
   def remove_duplicates(matches)
+    return unless matches && matches.count > 1
+
     matches.each_with_index do |currency, i|
       delete(currency, ignore: 404) if i.positive?
     end

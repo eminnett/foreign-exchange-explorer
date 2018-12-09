@@ -212,10 +212,10 @@ The three rake tasks have been chained together so they run in sequence when exe
 
 ## Opportunities for Improvement
 
-- Integrate 3rd party analysis services such as CircleCI and CodecCimate.
-- Improve the performance of the automated tests especially those that currently depend upon Elasticsearch.
-- Refactor the date look up logic so it doesn't rely upon searching for 'EUR' rates and returning the unique dates associated with those rates.
-- Add automated tests and static analysis for the React client-side application.
+- Fix Code Climate errors.
+- Add SASS linting to the front-end static analysis.
+- Add Breakman to the back-end static analysis
+- Add automated tests covering the React application.
 - Add a service worker to the client-side application so the app can work offline (assuming the requested dat has already been requested and cached to local storage).
 
 ## Project Management

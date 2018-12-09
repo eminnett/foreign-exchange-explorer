@@ -15,14 +15,8 @@ class DateSelector extends React.Component {
     this.props.dispatch(changeDate(selection));
   };
 
-  render() {
-    const dates = this.props.dates;
-    const firstDay = new Date(dates[0]);
-    const lastDay = new Date(dates[Object.keys(dates).reverse()[0]]);
-    const firstMonth = new Date(firstDay.getFullYear(), firstDay.getMonth());
-    const lastMonth = new Date(lastDay.getFullYear(), lastDay.getMonth());
-    const selection = this.props.selectedDate;
-    const disabledDays = [
+  findMissingDays = (dates, firstMonth, firstDay, lastDay) => {
+    let missingDays = [
       firstMonth,
       { after: firstMonth, before: firstDay },
       {
@@ -34,10 +28,26 @@ class DateSelector extends React.Component {
     while (dt < lastDay) {
       let dtString = formatDate(dt);
       if (!Object.values(dates).includes(dtString)) {
-        disabledDays.push(new Date(dt));
+        missingDays.push(new Date(dt));
       }
       dt.setDate(dt.getDate() + 1);
     }
+    return missingDays;
+  };
+
+  render() {
+    const dates = this.props.dates;
+    const firstDay = new Date(dates[0]);
+    const lastDay = new Date(dates[Object.keys(dates).reverse()[0]]);
+    const firstMonth = new Date(firstDay.getFullYear(), firstDay.getMonth());
+    const lastMonth = new Date(lastDay.getFullYear(), lastDay.getMonth());
+    const selection = this.props.selectedDate;
+    const disabledDays = this.findMissingDays(
+      dates,
+      firstMonth,
+      firstDay,
+      lastDay,
+    );
 
     return (
       <DayPicker

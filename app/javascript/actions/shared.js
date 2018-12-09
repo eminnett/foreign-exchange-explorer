@@ -12,32 +12,36 @@ import { selectDate, setDefaultDate } from './selectedDate';
 import { showLoading, hideLoading } from 'react-redux-loading';
 import { formatDate } from '../utils/exchange_rates_api';
 
+const requestDatesAndCurrencies = dispatch => {
+  return new Promise(function(resolve, reject) {
+    let receivedDates = false;
+    let receivedCurrencies = false;
+    getDates().then(dates => {
+      if (dates.length > 0) {
+        const lastDate = dates[Object.keys(dates).reverse()[0]];
+        dispatch(setDefaultDate(lastDate));
+        dispatch(receiveDates(dates));
+      }
+      receivedDates = true;
+      if (receivedCurrencies) {
+        resolve();
+      }
+    });
+    getCurrencies().then(currencies => {
+      dispatch(receiveCurrencies(currencies));
+      receivedCurrencies = true;
+      if (receivedDates) {
+        resolve();
+      }
+    });
+  });
+};
+
 export function populateData() {
   return dispatch => {
     dispatch(showLoading());
 
-    return new Promise(function(resolve, reject) {
-      let receivedDates = false;
-      let receivedCurrencies = false;
-      getDates().then(dates => {
-        if (dates.length > 0) {
-          const lastDate = dates[Object.keys(dates).reverse()[0]];
-          dispatch(setDefaultDate(lastDate));
-          dispatch(receiveDates(dates));
-        }
-        receivedDates = true;
-        if (receivedCurrencies) {
-          resolve();
-        }
-      });
-      getCurrencies().then(currencies => {
-        dispatch(receiveCurrencies(currencies));
-        receivedCurrencies = true;
-        if (receivedDates) {
-          resolve();
-        }
-      });
-    }).then(() => {
+    return requestDatesAndCurrencies(dispatch).then(() => {
       dispatch(hideLoading());
     });
   };
