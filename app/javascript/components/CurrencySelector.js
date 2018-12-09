@@ -11,8 +11,8 @@ class CurrencySelector extends React.Component {
     return (
       <div className="select-wrapper">
         <select
-          value={this.props.selection}
-          onChange={this.handleChange.bind(this)}
+          defaultValue={this.props.selection}
+          onBlur={this.handleChange.bind(this)}
         >
           <option value="" disabled={this.props.selectionMade}>
             {this.props.placeholder}
