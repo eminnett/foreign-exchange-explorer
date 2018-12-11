@@ -38,13 +38,15 @@ Scheduling the daily execution of the `ExchangeRateJob` is handled by the `Whene
 
 **NB:** There is an important consideration for this project that deserves its own discussion. The ECB data feed only provides exchange rates where the Euro is the base currency. This is, however, enough information to determine the exchange rates for all combinations of currencies present in the feed. While approaching this project I considered two approaches.
 
-The first uses a naive importer which simply stores the data it receives from the feed. When a request is made using base and counter currencies not present in the data store, the `ExchangeRate` could attempt to find the inverse rate (swap the base and counter currencies) and then simply return `1 / exchange_rate`. If this approach is insufficient to determine the requested rate then a search could be made for two exchange rates that have the same base currency and a counter currency matching the base and counter currencies provided in the request. The requested rate could then be calculated by taking the ratio of these two rates: `counter_currency_rate / base_currency_rate`. The newly calculated exchange rates could then be saved back to the data store to avoid recalculations.
+The first uses a naive importer which simply stores the data it receives from the feed. When a request is made using base and counter currencies not present in the data store, the `ExchangeRate` attempts to find the inverse rate (swap the base and counter currencies) and then simply return `1 / exchange_rate.value`. If this approach is insufficient to determine the requested rate then a search is made for two exchange rates using the most common base currency and a counter currency matching the base and counter currencies provided in the request. The requested rate is then calculated by taking the ratio of these two rates: `counter_currency_rate.value / base_currency_rate.value`. The newly calculated exchange rates are then saved back to the data store to avoid recalculations.
 
-The other option is embed more logic within the importer and use a naive interface on top of the data store. This interface would simply look up the rate in the data store matching the request and return an error if it couldn't be found. In this scenario the importer is responsible for all of the calculations. Given a set of exchange rates all with the same base currency the importer would take the following steps:
+Calculating all rates for a 90 day range through combination took 2.39 seconds to complete the first time and 0.076 seconds to complete once the rates were added to the store (every subsequent time). Taking 0.076 seconds to retrieve the data for an API request is acceptable while 2.39 seconds is not.
+
+The other option is to embed more logic within the importer. In this scenario the importer is responsible for all of the calculations. Given a set of exchange rates all with the same base currency the importer would take the following steps:
 
 - Save all of the exchange rates returned by the data feed.
 - Save all of the inverses of these exchange rates.
-- Recursively traverse the list of exchange rates calculating the rate for every combination of pairs of currencies.
+- Recursively traverse the list of exchange rates calculating the rate for every combination of currency pairs.
 
 It is worth noting that this exhaustive approach results in `n * (n - 1)` exchange rates where `n` is the number of currencies in the data feed.
 
@@ -69,9 +71,11 @@ The primary components of the software architecture are illustrated below. This 
 
 The following API endpoints are available via the Rails application and are used to retrieve the data used by the React application.
 
-Get...
+Get s single exchange rate for given base and counter currencies on a given day.
+
 `GET 'api/v1/exchange-rates/:base_currency/:counter_currency/?on=YYYY-MM-DD'`
-Example:
+
+Example response:
 ```
 /* GET /api/v1/exchange-rates/EUR/GBP/?on='2018-11-26' */
 {
@@ -83,8 +87,10 @@ Example:
 }
 ```
 
-Get...
+Get all available exchange rates for given base and counter currencies within a given date range (including those dates).
+
 `GET 'api/v1/exchange-rates/:base_currency/:counter_currency/?from=YYYY-MM-DD&to=YYYY-MM-DD'`
+
 Example response:
 ```
 /* GET /api/v1/exchange-rates/EUR/GBP/?from='2018-11-20'&to='2018-11-26' */
@@ -110,7 +116,9 @@ Example response:
 ```
 
 Get a list of all the currencies for which there are exchange rates in the data store sorted by the currency code alphabetically.
+
 `GET 'api/v1/currencies'`
+
 Example response:
 ```
 /* GET 'api/v1/currencies' */
@@ -212,7 +220,6 @@ The three rake tasks have been chained together so they run in sequence when exe
 
 ## Opportunities for Improvement
 
-- Fix Code Climate errors.
 - Add SASS linting to the front-end static analysis.
 - Add Breakman to the back-end static analysis
 - Add automated tests covering the React application.

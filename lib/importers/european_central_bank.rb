@@ -35,7 +35,7 @@ module Importers
     def time
       start = Time.zone.now
       yield
-      ellapsed_minutes = (Time.zone.now - start) * 24.0 * 60.0
+      ellapsed_minutes = (Time.zone.now - start) / 60.0
       log "\nProcess took #{ellapsed_minutes.round(2)} minutes to complete."
     end
 
