@@ -31,8 +31,11 @@ RSpec.describe ExchangeRatesController, type: :controller do
           base_currency: "EUR", counter_currency: "GBP", on: "2000-01-01"
         }
         res = JSON.parse(response.body)
-        expect(res.keys).to match_array(["error"])
-        expect(res["error"])
+        expect(response.code).to eq("404")
+        expect(res.keys).to match_array(%w[error message status])
+        expect(res["status"]).to eq(404)
+        expect(res["error"]).to eq("not_found")
+        expect(res["message"])
           .to eq("The exchange rate for EUR in GBP on 2000-01-01 is unknown.")
       end
     end
@@ -43,6 +46,7 @@ RSpec.describe ExchangeRatesController, type: :controller do
           base_currency: "EUR", counter_currency: "GBP", on: "2018-11-26"
         }
         res = JSON.parse(response.body)
+        expect(response.code).to eq("200")
         expect(res.keys).to match_array(
           %w[id base_currency counter_currency date value]
         )
@@ -62,6 +66,7 @@ RSpec.describe ExchangeRatesController, type: :controller do
           to:               "2018-11-27"
         }
         res = JSON.parse(response.body)
+        expect(response.code).to eq("200")
         expect(res).to be_an(Array)
         expect(res.first.keys).to match_array(
           %w[id base_currency counter_currency date value]
@@ -79,7 +84,7 @@ RSpec.describe ExchangeRatesController, type: :controller do
           .to match_array(["0.88598", "0.8848", "0.8844", "0.88748"])
       end
 
-      context "when the 'to' paramter is older than 'from'" do
+      context "when the 'to' parameter is older than 'from'" do
         it "returns an appropriate error message" do
           get :show, params: {
             base_currency:    "EUR",
@@ -88,8 +93,11 @@ RSpec.describe ExchangeRatesController, type: :controller do
             to:               "2018-11-22"
           }
           res = JSON.parse(response.body)
-          expect(res.keys).to match_array(["error"])
-          expect(res["error"])
+          expect(response.code).to eq("400")
+          expect(res.keys).to match_array(%w[error message status])
+          expect(res["status"]).to eq(400)
+          expect(res["error"]).to eq("bad_request")
+          expect(res["message"])
             .to eq("The 'from' date must be older than the 'to' date.")
         end
       end

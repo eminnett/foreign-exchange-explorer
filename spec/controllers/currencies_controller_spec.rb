@@ -27,12 +27,27 @@ RSpec.describe CurrenciesController, type: :controller do
     it "returns an array of currencies and symbols" do
       get :show
       res = JSON.parse(response.body)
+      expect(response.code).to eq("200")
       expect(res).to be_an(Array)
       expect(res.first.keys).to match_array(%w[id code symbol])
       currencies = res.map {|datum| datum["code"] }
       symbols = res.map {|datum| datum["symbol"] }
       expect(currencies).to match_array(%w[EUR GBP])
       expect(symbols).to match_array(["€", "£"])
+    end
+
+    context "when there aren't any currencies available" do
+      it "returns a 404 response" do
+        allow(ExchangeRate).to receive(:currencies).and_return([])
+        get :show
+        res = JSON.parse(response.body)
+        expect(response.code).to eq("404")
+        expect(res.keys).to match_array(%w[error message status])
+        expect(res["status"]).to eq(404)
+        expect(res["error"]).to eq("not_found")
+        expect(res["message"])
+          .to eq("The requested resource(s) could not be found.")
+      end
     end
   end
 end

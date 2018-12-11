@@ -10,6 +10,12 @@ class ExchangeRatesController < ApplicationController
     assign_params parse_params
     assign_defaults
     render json: build_response
+  rescue BadParams => e
+    bad_request(e.message)
+  rescue ExchangeRate::NotFound => e
+    not_found(e.message)
+  rescue StandardError => e
+    handle_internal_server_error(e)
   end
 
   private
@@ -43,12 +49,10 @@ class ExchangeRatesController < ApplicationController
 
   def single_exchange_rate
     ExchangeRate.find_rate(on, base_currency, counter_currency)
-  rescue ExchangeRate::NotFound => e
-    {error: e.message}
   end
 
   def multiple_exchange_rates
-    return {error: "The 'from' date must be older than the 'to' date."} if from > to
+    raise BadParams, "The 'from' date must be older than the 'to' date." if from > to
 
     ExchangeRate.rates_between(from, to, base_currency, counter_currency)
   end
