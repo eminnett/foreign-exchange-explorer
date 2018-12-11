@@ -20,11 +20,16 @@ class ExchangeRateRepository
            {sort: "date"}.merge(options))
   end
 
+  def most_common_base_currency
+    search(size: 0, aggs: {currencies: {terms: {field: :base_currency}}})
+      .response.aggregations.currencies.buckets.first[:key]
+  end
+
   def all_dates
     search(
       {
         from: 0, size: 10_000, query: {
-          match: {base_currency: all.first.base_currency}
+          match: {base_currency: most_common_base_currency}
         }
       },
       sort: "date"
@@ -40,7 +45,7 @@ class ExchangeRateRepository
                  {match: {date: date}}
                ]
              }
-           })
+           }).first
   end
 
   def between_dates(from, to, base_currency, counter_currency)
