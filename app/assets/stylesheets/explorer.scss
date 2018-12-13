@@ -1,176 +1,197 @@
-@import url('https://fonts.googleapis.com/css?family=Merriweather');
+$text-colour:      #666;
+$white:            #fff;
+$primary-colour:   #156a0b;
+$accent-colour:    #e9ebe0;
+$secondary-colour: #c1d1bb;
 
-$TEXT_COLOUR:            #666666;
-$WHITE:                  #ffffff;
-$PRIMARY_COLOUR:         #156A0B;
-$ACCENT_COLOUR:          #E9EBE0;
-$SECONDARY_COLOUR:       #C1D1BB;
+$no-margin: 0;
+$small-margin: 10px;
+
+$a: '\a';
+$blank: ' ';
 
 body {
-    color: $TEXT_COLOUR;
-    font-family: 'Merriweather', serif;
-    display: flex;
-    justify-content: center;
-    margin: 0;
+  color: $text-colour;
+  display: flex;
+  font-family: 'Merriweather', serif;
+  justify-content: center;
+  margin: $no-margin;
 }
 
 :focus {
-    border: none;
-    box-shadow: none;
-    outline: none;
+  border: 0;
+  box-shadow: none;
+  outline: none;
 }
 
 button {
-    width: 100%;
+  width: 100%;
 }
 
-button, .button {
-    text-align: center;
-    padding: 5px;
-    font-size: 1em;
-    border: 1px solid $PRIMARY_COLOUR;
-    background: $WHITE;
-    color: $PRIMARY_COLOUR;
-    &:focus {
-        border: 1px solid $PRIMARY_COLOUR;
-    }
-    &:hover {
-        background: $SECONDARY_COLOUR;
-        cursor: pointer;
-    }
-    &:disabled,
-    &[disabled]{
-      border: 1px solid $ACCENT_COLOUR;
-      color: $ACCENT_COLOUR;
-      background: $WHITE;
-      cursor: default;
-    }
+button,
+.button {
+  background: $white;
+  border: 1px solid $primary-colour;
+  color: $primary-colour;
+  font-size: 1em;
+  padding: 5px;
+  text-align: center;
+
+  &:focus {
+    border: 1px solid $primary-colour;
+  }
+
+  &:hover {
+    background: $secondary-colour;
+    cursor: pointer;
+  }
+
+  &:disabled,
+  &[disabled] {
+    background: $white;
+    border: 1px solid $accent-colour;
+    color: $accent-colour;
+    cursor: default;
+  }
 }
 
 input {
-    width: 100%;
-    font-size: 1em;
-    padding: 5px;
-    border: 1px solid $SECONDARY_COLOUR;
-    &:focus {
-        border: 1px solid $PRIMARY_COLOUR;
-        box-shadow: none;
-        outline: none;
-    }
+  border: 1px solid $secondary-colour;
+  font-size: 1em;
+  padding: 5px;
+  width: 100%;
+
+  &:focus {
+    border: 1px solid $primary-colour;
+    box-shadow: none;
+    outline: none;
+  }
 }
 
 select {
-    cursor: pointer;
-    font-size: 1em;
-    color: $PRIMARY_COLOUR;
-    width: 100%;
-    &:focus {
-        border: 1px solid $PRIMARY_COLOUR;
-    }
+  color: $primary-colour;
+  cursor: pointer;
+  font-size: 1em;
+  width: 100%;
+
+  &:focus {
+    border: 1px solid $primary-colour;
+  }
 }
 
 .loading-bar {
-    background-color: $SECONDARY_COLOUR;
-    height: 0;
+  background-color: $secondary-colour;
+  height: 0;
 }
 
-.conditional-line-break:after {
-    content:"\a";
+.conditional-line-break {
+  ::after {
+    content: $a;
     white-space: pre;
+  }
 }
 
 section {
-    border: 2px solid $ACCENT_COLOUR;
-    border-top: none;
+  border: 2px solid $accent-colour;
+  border-top: 0;
 }
 
 .app-wrapper {
-    max-width: 600px;
-    min-width: 400px;
-    margin: 10px;
+  margin: $small-margin;
+  max-width: 600px;
+  min-width: 400px;
 }
 
 .heading {
-    background: $PRIMARY_COLOUR;
-    color: $ACCENT_COLOUR;
-    border: 2px solid $PRIMARY_COLOUR;
-    padding: 20px;
-    margin-bottom: 0;
-    text-align: center;
+  background: $primary-colour;
+  border: 2px solid $primary-colour;
+  color: $accent-colour;
+  margin-bottom: 0;
+  padding: 20px;
+  text-align: center;
 }
 
 .form-wrapper {
+  display: flex;
+  justify-content: center;
+
+  .DayPicker {
     display: flex;
     justify-content: center;
+  }
 
-    .DayPicker {
-        display: flex;
-        justify-content: center;
-    }
+  .DayPicker-wrapper {
+    max-width: 300px;
+  }
 
-    .DayPicker-wrapper {
-        max-width: 300px;
+  .DayPicker-Day--selected:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside) {
+    background-color: $primary-colour;
+
+    &:hover {
+      background-color: $primary-colour;
     }
-    .DayPicker-Day--selected:not(.DayPicker-Day--disabled):not(.DayPicker-Day--outside) {
-        background-color: $PRIMARY_COLOUR;
-        &:hover {
-            background-color: $PRIMARY_COLOUR;
-        }
-    }
-    .DayPicker:not(.DayPicker--interactionDisabled)
-    .DayPicker-Day:not(.DayPicker-Day--disabled):not(.DayPicker-Day--selected):not(.DayPicker-Day--outside):hover {
-        background-color: $SECONDARY_COLOUR;
-    }
+  }
+
+  .DayPicker:not(.DayPicker--interactionDisabled)
+  .DayPicker-Day:not(.DayPicker-Day--disabled):not(.DayPicker-Day--selected):not(.DayPicker-Day--outside):hover {
+    background-color: $secondary-colour;
+  }
 }
 
 .inputs-wrapper {
-    margin-top: 6px;
-    margin-right: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 290px;
+  display: flex;
+  flex-direction: column;
+  height: 290px;
+  justify-content: space-between;
+  margin-right: 20px;
+  margin-top: 6px;
 
-    .label {
-        padding-top: 10px;
-        font-weight: 500;
-        font-size: 1.15em;
-    }
+  .label {
+    font-size: 1.15em;
+    font-weight: 500;
+    padding-top: 10px;
+  }
 
-    .amount-input {
-        input {
-            margin-top: 10px;
-            margin-top: 10px;
-            width: 96%;
-            color: $PRIMARY_COLOUR;
-        }
+  .amount-input {
+    input {
+      color: $primary-colour;
+      margin-top: 10px;
+      width: 96%;
     }
+  }
 }
 
 .results-wrapper {
-    padding: 20px;
-    .results {
-        font-size: 1.2em;
-        text-align: center;
-        line-height: 2em;
-        padding-bottom: 10px;
-    }
+  padding: 20px;
+
+  .results {
+    font-size: 1.2em;
+    line-height: 2em;
+    padding-bottom: 10px;
+    text-align: center;
+  }
 }
 
 @media screen and (max-width: 540px) {
-    .heading h1 {
-        font-size: 1.6em;
+  .heading  {
+    h1 {
+      font-size: 1.6em;
     }
-    .conditional-line-break:after {
-        content: ' ';
-        white-space: normal;
-    }
-    .form-wrapper {
-        flex-direction: column;
-    }
+  }
 
-    .inputs-wrapper {
-        padding: 20px;
-        padding-top: 0;
+  .conditional-line-break {
+    ::after {
+      content: $blank;
+      white-space: normal;
     }
+  }
+
+  .form-wrapper {
+    flex-direction: column;
+  }
+
+  .inputs-wrapper {
+    padding: 20px;
+    padding-top: 0;
+  }
 }

@@ -1,0 +1,7 @@
+options:
+  merge-default-rules: true
+  max-warnings: 20
+files:
+  include: 'app/assets/stylesheets/**/*.s+(a|c)ss'
+  ignore:
+    - 'node_modules/**/*'

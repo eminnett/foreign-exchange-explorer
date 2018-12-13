@@ -2,8 +2,8 @@
   "name": "foreign-exchange-explorer",
   "private": true,
   "scripts": {
-    "fix-linting": "eslint --fix .",
-    "pretest": "eslint .",
+    "fix-linting": "eslint --fix . && sass-lint-auto-fix",
+    "pretest": "eslint . && sass-lint -c .sass-lint.yml '**/*.scss' -v -q",
     "test": "jest --coverage"
   },
   "jest": {
@@ -45,6 +45,8 @@
     "istanbul": "^0.4.5",
     "jest": "^23.6.0",
     "prettier": "^1.15.3",
+    "sass-lint": "^1.12.1",
+    "sass-lint-auto-fix": "^0.15.0",
     "webpack-dev-server": "2.11.2"
   }
 }
