@@ -231,4 +231,4 @@ The tasks for this project are managed via [Trello](https://trello.com/b/5VygBLK
 
 ## License
 
-Chart.js is available under the [MIT license](http://opensource.org/licenses/MIT).
+This project is available under the [MIT license](http://opensource.org/licenses/MIT).
