@@ -19,5 +19,5 @@ if %w[development test].include? Rails.env
   end
 
   task(:default).clear
-  task default: ['bundler:audit', :rubocop, :spec]
+  task default: ['bundler:audit', 'brakeman:run', :rubocop, :spec]
 end

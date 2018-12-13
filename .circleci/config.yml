@@ -55,9 +55,9 @@ jobs:
 
             bundle exec rake bundler:audit
 
-            bundle exec rubocop
+            bundle exec brakeman:run
 
-            brakeman
+            bundle exec rubocop
 
             bundle exec rspec --format progress \
                             --format RspecJunitFormatter \
