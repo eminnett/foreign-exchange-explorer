@@ -5,13 +5,8 @@
 version: 2
 defaults: &defaults
   docker:
-    # specify the version you desire here
     - image: circleci/ruby:2.5.3-node
     - image: bitnami/elasticsearch:latest
-    # Specify service dependencies here if necessary
-    # CircleCI maintains a library of pre-built images
-    # documented at https://circleci.com/docs/2.0/circleci-images/
-    # - image: circleci/postgres:9.4
   working_directory: ~/repo
 jobs:
   build:
@@ -62,6 +57,8 @@ jobs:
 
             bundle exec rubocop
 
+            brakeman
+
             bundle exec rspec --format progress \
                             --format RspecJunitFormatter \
                             --out /tmp/test-results/rspec.xml \
@@ -101,11 +98,9 @@ jobs:
           paths:
             - ~/.npm
             - ~/.cache
-
       - run:
           name: setup test coverage
           command: ./tmp/cc-test-reporter before-build
-
       - run:
           name: Run frontend tests
           command: |
@@ -116,20 +111,6 @@ jobs:
           root: tmp
           paths:
             - codeclimate.frontend.json
-
-      # - checkout
-      # - attach_workspace:
-      #     at: ~/repo/tmp
-      # - run: npm install
-      # - run:
-      #     name: Run frontend tests
-      #     command: |
-      #       npm test
-      #       ./tmp/cc-test-reporter format-coverage -t lcov -o tmp/codeclimate.frontend.json coverage/frontend/lcov.info
-      # - persist_to_workspace:
-      #     root: tmp
-      #     paths:
-      #       - codeclimate.frontend.json
 
   upload-coverage:
     <<: *defaults
