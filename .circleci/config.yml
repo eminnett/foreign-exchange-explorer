@@ -55,7 +55,7 @@ jobs:
 
             bundle exec rake bundler:audit
 
-            bundle exec brakeman:run
+            bundle exec rake brakeman:run
 
             bundle exec rubocop
 
